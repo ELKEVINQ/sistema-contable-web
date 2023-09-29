@@ -1,0 +1,32 @@
+/* Estilos para el footer fijo */
+.fixed-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Estilos para el contenido dentro del footer */
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+/* Estilos para los iconos de redes sociales */
+.social-icons {
+  display: flex;
+  gap: 10px; /* Espacio entre los iconos */
+}
+
+.social-icon {
+  font-size: 24px;
+  color: gray;
+  padding: 5px;
+  transition: color 0.3s ease-in-out; /* Transición suave de color */
+}
+
+.social-icon:hover {
+  color: #333; /* Cambio de color al pasar el mouse */
+}
