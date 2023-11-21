@@ -1,0 +1,66 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4><i class="fas fa-user-plus"></i> Añadir cliente</h4>
+    </div>
+    <div class="card-body">
+      <form *ngIf="clienteForm" [formGroup]="clienteForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Cédula -->
+          <div class="col-md-3 mb-2">
+            <label for="cedula" class="form-label">Cédula:</label>
+            <input type="text" id="cedula" class="form-control" formControlName="cedula" maxlength="13" [class.is-invalid]="clienteForm.get('cedula')?.invalid && clienteForm.get('cedula')?.touched">
+            <div *ngIf="clienteForm.get('cedula')?.hasError('validarCedula')" class="text-danger">
+              Cédula incorrecta. Ingrésela nuevamente.
+            </div>
+          </div>
+
+          <!-- Nombres -->
+          <div class="col-md-4 mb-2">
+            <label for="nombres" class="form-label">Nombres:</label>
+            <input type="text" id="nombres" class="form-control" formControlName="nombres" [class.is-invalid]="clienteForm.get('nombres')?.invalid && clienteForm.get('nombres')?.touched">
+            <!-- Puedes agregar mensajes de error según sea necesario -->
+          </div>
+
+          <!-- Apellidos -->
+          <div class="col-md-5 mb-2">
+            <label for="apellidos" class="form-label">Apellidos:</label>
+            <input type="text" id="apellidos" class="form-control" formControlName="apellidos" [class.is-invalid]="clienteForm.get('apellidos')?.invalid && clienteForm.get('apellidos')?.touched">
+            <!-- Puedes agregar mensajes de error según sea necesario -->
+          </div>
+        </div>
+
+        <!-- Teléfono y Dirección -->
+        <div class="row">
+          <!-- Teléfono -->
+          <div class="col-md-3 mb-2">
+            <label for="telefono" class="form-label">Teléfono:</label>
+            <input type="text" id="telefono" class="form-control" formControlName="telefono">
+            <!-- Puedes agregar mensajes de error según sea necesario -->
+          </div>
+
+          <!-- Dirección -->
+          <div class="col-md-9 mb-2">
+            <label for="direccion" class="form-label">Dirección:</label>
+            <input type="text" id="direccion" class="form-control" formControlName="direccion">
+            <!-- Puedes agregar mensajes de error según sea necesario -->
+          </div>
+        </div>
+
+        <!-- Correo Electrónico -->
+        <div class="mb-2">
+          <label for="correo" class="form-label">Correo Electrónico:</label>
+          <input type="text" id="correo" class="form-control" formControlName="correo">
+          <div *ngIf="clienteForm.get('correo')?.hasError('validarCorreo')" class="text-danger">
+            Correo electrónico incorrecto. Ingréselo nuevamente.
+          </div>
+        </div>
+
+        <!-- Botón de guardar -->
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

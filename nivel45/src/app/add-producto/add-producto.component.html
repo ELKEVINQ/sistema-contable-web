@@ -1,0 +1,56 @@
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="fa fa-database"></i> Añadir nuevo producto</h4>
+        </div>
+        <div class="card-body">
+            <form *ngIf="productoForm" [formGroup]="productoForm" (ngSubmit)="onSubmit()">
+                <!--Fila para datos del cliente-->
+                <div class="row">
+                    <!--Nombre del proveedor-->
+                    <div class="col-md-2 mb-4">
+                        <label for="nombreProveedor" class="form-label">Nombre de proveedor:</label>
+                        <input type="text" id="nombreProveedor" class="form-control" formControlName="nombreProveedor"
+                            (input)="onInputChange()">
+                    </div>
+                    <!--Id del proveedor-->
+                    <div class="col-md-2 mb-4">
+                        <label for="idProveedor" class="form-label">Id del proveedor:</label>
+                        <input type="text" id="idProveedor" class="form-control" formControlName="idProveedor" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <!--Esistencias-->
+                    <div class="col-md-1 mb-4">
+                        <label for="existencias" class="form-label">Existencias:</label>
+                        <input type="text" id="existencias" class="form-control" formControlName="existencias" (keypress)="validarEntrada($event)">
+                    </div>
+                    <!--Nombre del producto-->
+                    <div class="col-md-5 mb-4">
+                        <label for="nombre" class="form-label">Nombre del producto:</label>
+                        <input type="text" id="nombre" class="form-control" formControlName="nombre">
+                    </div>
+                </div>
+                <div class="row">
+                    <!--Precio Sin iva-->
+                    <div class="col-md-3 mb-2">
+                        <label for="precio" class="form-label">Precio:</label>
+                        <input type="text" id="precio" class="form-control" formControlName="precio"
+                            (keypress)="validarEntrada($event)" />
+                    </div>
+                    <!--Precio Sin iva-->
+                    <div class="col-md-3 mb-2">
+                        <label for="precioIva" class="form-label">Precio con Iva:</label>
+                        <input type="text" id="precioIva" class="form-control" formControlName="precioIva" readonly/>
+                    </div>
+                </div>
+                <!--Boton de enviar-->
+                <div class="row">
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

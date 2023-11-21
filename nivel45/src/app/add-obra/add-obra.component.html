@@ -1,0 +1,74 @@
+<!-- add-obra.component.html -->
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4><i class="fas fa-building"></i> Añadir Obra</h4>
+    </div>
+    <div class="card-body">
+      <form *ngIf="obraForm" [formGroup]="obraForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Cédula -->
+          <div class="col-md-4 mb-2">
+            <label for="cedula" class="form-label">Cédula:</label>
+            <input type="text" id="cedula" class="form-control" formControlName="cedula">
+            <div *ngIf="obraForm.get('cedula')?.hasError('required')" class="text-danger">
+              La cédula es obligatoria.
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Descripción -->
+          <div class="col-md-12 mb-2">
+            <label for="descripcion" class="form-label">Descripción:</label>
+            <textarea id="descripcion" class="form-control" formControlName="descripcion"></textarea>
+            <div *ngIf="obraForm.get('descripcion')?.hasError('required')" class="text-danger">
+              La descripción es obligatoria.
+            </div>
+          </div>
+        </div>
+        <!-- Total y Fecha de Inicio -->
+        <div class="row">
+          <!-- Total -->
+          <div class="col-md-3 mb-2">
+            <label for="total" class="form-label">Total:</label>
+            <input type="text" id="total" class="form-control" formControlName="total">
+            <div *ngIf="obraForm.get('total')?.hasError('required')" class="text-danger">
+              El total es obligatorio.
+            </div>
+            <div *ngIf="obraForm.get('total')?.hasError('pattern')" class="text-danger">
+              El total debe ser un número válido.
+            </div>
+          </div>
+          <!-- Número -->
+          <div class="col-md-2 mb-2">
+            <label for="numero" class="form-label">Número de obra:</label>
+            <input type="text" id="numero" class="form-control" formControlName="numero" maxlength="5" readonly>
+          </div>
+
+          <!-- Fecha de Inicio -->
+          <div class="col-md-5 mb-2">
+            <label for="fechaInicio" class="form-label">Fecha de Inicio:</label>
+            <div class="input-group">
+              <input class="form-control form-control-sm" formControlName="fechaInicio" ngbDatepicker
+                #dp="ngbDatepicker" readonly/><!-- Agregado form-control-sm para hacerlo más pequeño -->
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">
+                  <!-- Modificado el contenido del botón -->
+                  <i class="fa fa-calendar" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="obraForm.get('fechaInicio')?.hasError('required')" class="text-danger">
+              La fecha de inicio es obligatoria.
+            </div>
+          </div>
+        </div>
+        <!-- Botón de guardar -->
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

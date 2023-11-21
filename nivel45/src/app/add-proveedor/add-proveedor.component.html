@@ -1,0 +1,45 @@
+<!-- add-obra.component.html -->
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4><i class="fa fa-truck"></i> Añadir Proveedor</h4>
+    </div>
+    <div class="card-body">
+      <form *ngIf="proveedorForm" [formGroup]="proveedorForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Nombre -->
+          <div class="col-md-4 mb-2">
+            <label for="nombre" class="form-label">Nombre:</label>
+            <input type="text" id="nombre" class="form-control" formControlName="nombre">
+            <div *ngIf="proveedorForm.get('nombre')?.hasError('required')" class="text-danger">
+              El nombre es obligatorio.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!-- telefono -->
+          <div class="col-md-3 mb-2">
+            <label for="telefono" class="form-label">Teléfono:</label>
+            <input id="telefono" class="form-control" formControlName="telefono">
+          </div>
+          <!-- celular -->
+          <div class="col-md-3 mb-2">
+            <label for="celular" class="form-label">Celular:</label>
+            <input type="text" id="celular" class="form-control" formControlName="celular">
+          </div>
+        </div>
+        <div class="row">
+          <!-- Direccion -->
+          <div class="col-md-6 mb-2">
+            <label for="direccion" class="form-label">Dirección:</label>
+            <input type="text" id="direccion" class="form-control" formControlName="direccion">
+          </div>
+        </div>
+        <!-- Botón de guardar -->
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

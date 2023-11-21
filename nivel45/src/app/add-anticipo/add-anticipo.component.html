@@ -1,0 +1,72 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4><i class="fa fa-usd"></i> Añadir Anticipo</h4>
+    </div>
+    <div class="card-body">
+      <form *ngIf="anticipoForm" [formGroup]="anticipoForm" (ngSubmit)="onSubmit()">
+        <!--Fila para datos del cliente-->
+        <div class="row">
+          <!--Cedula del cliente traida de la tabla-->
+          <div class="col-md-2 mb-2">
+            <label for="cedula" class="form-label">Cédula:</label>
+            <input type="text" id="cedula" class="form-control" formControlName="cedula" readonly>
+          </div>
+          <!--Nombre del cliente traida de la tabla-->
+          <div class="col-md-4 mb-2">
+            <label for="nombres" class="form-label">Nombres:</label>
+            <input type="text" id="nombres" class="form-control" formControlName="nombres" readonly>
+          </div>
+          <!--Apellido del cliente traida de la tabla-->
+          <div class="col-md-4 mb-2">
+            <label for="apellidos" class="form-label">Apellidos:</label>
+            <input type="text" id="apellidos" class="form-control" formControlName="apellidos" readonly>
+          </div>
+          <!--Numero de obra traida de la tabla-->
+          <div class="col-md-2 mb-2">
+            <label for="numero" class="form-label">Numero de obra:</label>
+            <input type="text" id="numero" class="form-control" formControlName="numero" readonly>
+          </div>
+        </div>
+        <!--Campos ingresados-->
+        <div class="row">
+          <!--Descripcion-->
+          <div class="col-md-4 mb-2">
+            <label for="descripcion" class="form-label">Descripcion:</label>
+            <input type="text" id="descripcion" class="form-control" formControlName="descripcion" />
+          </div>
+          <!-- Fecha de Inicio -->
+          <div class="col-md-5 mb-2">
+            <label for="fecha" class="form-label">Fecha:</label>
+            <div class="input-group">
+              <input class="form-control form-control-sm" formControlName="fecha" ngbDatepicker
+                #dp="ngbDatepicker" readonly/><!-- Agregado form-control-sm para hacerlo más pequeño -->
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">
+                  <!-- Modificado el contenido del botón -->
+                  <i class="fa fa-calendar" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="anticipoForm.get('fecha')?.hasError('required')" class="text-danger">
+              La fecha de inicio es obligatoria.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!--Valor-->
+          <div class="col-md-3 mb-2">
+            <label for="valor" class="form-label">Valor:</label>
+            <input type="text" id="valor" class="form-control" formControlName="valor" (keypress)="validarEntrada($event)" />
+          </div>
+        </div>
+        <!--Boton de enviar-->
+        <div class="row">
+          <div class="text-end mt-3">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

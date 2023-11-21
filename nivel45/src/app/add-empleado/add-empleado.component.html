@@ -1,0 +1,52 @@
+<!-- add-obra.component.html -->
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4><i class="fa fa-user"></i> Añadir Empelados</h4>
+    </div>
+    <div class="card-body">
+      <form *ngIf="empleadoForm" [formGroup]="empleadoForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Cedula -->
+          <div class="col-md-4 mb-2">
+            <label for="cedula" class="form-label">Cedula:</label>
+            <input type="text" id="cedula" class="form-control" formControlName="cedula" (input)="onInputChange()" maxlength="10">
+          </div>
+          <div class="col-md-6 mb-2">
+            <label for="nombres" class="form-label">Nombres:</label>
+            <input type="text" id="nombres" class="form-control" formControlName="nombres" readonly value="{{nombres}}">
+          </div>
+        </div>
+        <div class="row">
+          <!-- Fecha de Inicio -->
+          <div class="col-md-5 mb-2">
+            <label for="fecha_entrada" class="form-label">Fecha de Inicio:</label>
+            <div class="input-group">
+              <input class="form-control form-control-sm" formControlName="fecha_entrada" ngbDatepicker
+                #dp="ngbDatepicker" readonly/><!-- Agregado form-control-sm para hacerlo más pequeño -->
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">
+                  <!-- Modificado el contenido del botón -->
+                  <i class="fa fa-calendar" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="empleadoForm.get('fecha_entrada')?.hasError('required')" class="text-danger">
+              La fecha de inicio es obligatoria.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 mb-2">
+            <label for="sueldo" class="form-label">Sueldo:</label>
+            <input type="text" id="sueldo" class="form-control" formControlName="sueldo" (keypress)="validarEntrada($event)">
+          </div>
+        </div>
+        <!-- Botón de guardar -->
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
