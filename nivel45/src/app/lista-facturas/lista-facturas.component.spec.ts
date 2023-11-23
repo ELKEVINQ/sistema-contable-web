@@ -1,4 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+/* tslint:disable:no-unused-variable */
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
 
 import { ListaFacturasComponent } from './lista-facturas.component';
 
@@ -6,10 +9,14 @@ describe('ListaFacturasComponent', () => {
   let component: ListaFacturasComponent;
   let fixture: ComponentFixture<ListaFacturasComponent>;
 
-  beforeEach(() => {
+  beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ListaFacturasComponent]
-    });
+      declarations: [ ListaFacturasComponent ]
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(ListaFacturasComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

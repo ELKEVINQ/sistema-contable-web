@@ -6,7 +6,7 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ProductoService } from '../services/producto/producto.service';
 import { Subject } from 'rxjs';
 import { WebcamImage } from 'ngx-webcam';
-import { ProductoTabla } from '../interfaces/ProductoTabla';
+import { ProductoTabla } from '../interfaces/ProductoTabla'
 
 @Component({
   selector: 'app-facturar',

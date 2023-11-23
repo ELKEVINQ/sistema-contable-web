@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProductoService } from '../services/producto/producto.service';
 import { Router } from '@angular/router';
-import * as pdfMake from 'pdfmake/build/pdfmake'; // Importa pdfMake
+import * as pdfMake from 'pdfmake/build/pdfMake'; // Importa pdfMake
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'; // Importa pdfFonts
 
 @Component({

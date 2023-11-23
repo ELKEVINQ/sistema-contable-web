@@ -1,67 +1,67 @@
 .actions1 {
-  color: lightgreen;
-}
-
-.actions2 {
-  color: red;
-}
-
-.qr-overlay {
-  position: relative;
-  width: 64px; /* Establece el ancho en 64px */
-  height: 64px; /* Establece la altura en 64px */
-  border-radius: 50%; /* Esto redondea los bordes al 50% para hacer un círculo */
-  overflow: hidden; /* Oculta el desbordamiento de los bordes redondeados */
-  cursor: pointer;
-}
-
-.qr-overlay:hover::before {
-  content: ''; /* Agrega un contenido pseudo-elemento para aplicar el filtro solo al qr-image */
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Fondo oscuro en hover */
-  transition: background 0.3s;
-}
-
-.qr-overlay .qrimage {
-  z-index: 1;
-}
-
-.qr-overlay .qrimage:hover::before {
-  background: rgba(0, 0, 0, 0); /* Fondo transparente en el hover del qr-image */
-}
-
-#print-icon {
-  z-index: 2;
-  position: absolute;
-  left: 30%;
-  top: 30%;
-  color: white; /* Color del icono */
-  font-size: 24px; /* Tamaño del icono */
-  display: none; /* Oculta el ícono por defecto */
-  transition: display 0.3s;
-}
-
-.qr-overlay:hover #print-icon {
-  display: block; /* Muestra el ícono en hover */
-}
-
-.lista {
-  /* Estilos para la lista */
-}
-
-.lista.blurred {
-  filter: brightness(70%); /* Aplica un efecto de oscurecimiento cuando la clase 'blurred' está presente */
-}
-
-.qrmodal {
-  /* Estilos para el modal */
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  /* ... otros estilos ... */
-}
+    color: lightgreen;
+  }
+  
+  .actions2 {
+    color: red;
+  }
+  
+  .qr-overlay {
+    position: relative;
+    width: 64px; /* Establece el ancho en 64px */
+    height: 64px; /* Establece la altura en 64px */
+    border-radius: 50%; /* Esto redondea los bordes al 50% para hacer un círculo */
+    overflow: hidden; /* Oculta el desbordamiento de los bordes redondeados */
+    cursor: pointer;
+  }
+  
+  .qr-overlay:hover::before {
+    content: ''; /* Agrega un contenido pseudo-elemento para aplicar el filtro solo al qr-image */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Fondo oscuro en hover */
+    transition: background 0.3s;
+  }
+  
+  .qr-overlay .qrimage {
+    z-index: 1;
+  }
+  
+  .qr-overlay .qrimage:hover::before {
+    background: rgba(0, 0, 0, 0); /* Fondo transparente en el hover del qr-image */
+  }
+  
+  #print-icon {
+    z-index: 2;
+    position: absolute;
+    left: 30%;
+    top: 30%;
+    color: white; /* Color del icono */
+    font-size: 24px; /* Tamaño del icono */
+    display: none; /* Oculta el ícono por defecto */
+    transition: display 0.3s;
+  }
+  
+  .qr-overlay:hover #print-icon {
+    display: block; /* Muestra el ícono en hover */
+  }
+  
+  .lista {
+    /* Estilos para la lista */
+  }
+  
+  .lista.blurred {
+    filter: brightness(70%); /* Aplica un efecto de oscurecimiento cuando la clase 'blurred' está presente */
+  }
+  
+  .qrmodal {
+    /* Estilos para el modal */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* ... otros estilos ... */
+  }

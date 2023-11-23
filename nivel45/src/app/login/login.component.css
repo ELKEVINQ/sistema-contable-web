@@ -1,14 +1,15 @@
 .input-group-text {
-  background-color: #f0f0f0; /* Cambia el color de fondo a gris */
-  border: none; /* Elimina el borde */
-  cursor: pointer; /* Cambia el cursor al pasar el mouse */
-}
-
-.image-container {
-  text-align: center; /* Centra horizontalmente */
-}
-
-.image-container img {
-  max-width: 35%; /* Establece el tamaño máximo al 60% */
-  display: inline-block; /* Para centrar verticalmente */
-}
+    background-color: #f0f0f0; /* Cambia el color de fondo a gris */
+    border: none; /* Elimina el borde */
+    cursor: pointer; /* Cambia el cursor al pasar el mouse */
+  }
+  
+  .image-container {
+    text-align: center; /* Centra horizontalmente */
+  }
+  
+  .image-container img {
+    max-width: 35%; /* Establece el tamaño máximo al 60% */
+    display: inline-block; /* Para centrar verticalmente */
+  }
+  

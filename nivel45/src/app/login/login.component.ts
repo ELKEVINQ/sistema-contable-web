@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data/data.service';
-import { SessionService } from '../services/session/session.service'; // Asegúrate de ajustar la ruta según la estructura de tu proyecto
+import { SessionService } from '../services/session/session.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   showPassword = false;
   usuario: string = '';
   password: string = '';
@@ -17,6 +17,9 @@ export class LoginComponent {
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  ngOnInit() {
   }
 
   onSubmit() {
@@ -42,4 +45,5 @@ export class LoginComponent {
       alert('Rellene todos los campos por favor.');
     }
   }
+
 }

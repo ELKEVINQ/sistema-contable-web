@@ -6,7 +6,6 @@ import { ObrasComponent } from './obras/obras.component';
 import { ContactoComponent } from './contacto/contacto.component';
 import { LoginComponent } from './login/login.component';
 import { AddAnticipoComponent } from './add-anticipo/add-anticipo.component';
-import { AddClienteComponent } from './add-cliente/add-cliente.component';
 import { AddProveedorComponent } from './add-proveedor/add-proveedor.component';
 import { ListaAnticiposComponent } from './lista-anticipos/lista-anticipos.component';
 import { ListaClientesComponent } from './lista-clientes/lista-clientes.component';
@@ -24,6 +23,7 @@ import { PagarRolComponent } from './pagar-rol/pagar-rol.component';
 import { AddProductoComponent } from './add-producto/add-producto.component';
 import { ListaProductosComponent } from './lista-productos/lista-productos.component';
 import { ListaEmpleadosComponent } from './lista-empleados/lista-empleados.component';
+import { AddClienteComponent } from './add-cliente/add-cliente.component';
 
 const routes: Routes = [
   { path: 'inicio', component: InicioComponent },
