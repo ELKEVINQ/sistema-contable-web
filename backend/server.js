@@ -452,6 +452,23 @@ app.get('/obtener-productos', (req, res) => {
     });
 });
 
+app.get('/obtener-producto/:idProducto', (req, res) => {
+    const idProducto = req.params.idProducto;
+
+    // Consulta SQL para obtener la cantidad de obras asociadas a la cédula
+    const consulta = 'SELECT * FROM producto WHERE idProducto = ?';
+
+    db.query(consulta, [idProducto], (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener el producto:', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            console.log(resultados);
+            res.json(resultados);
+        }
+    });
+});
+
 // Ruta para la insercion de empleados
 app.post('/insertar-empleado', (req, res) => {
     const { cedula, fecha_entrada, sueldo } = req.body;

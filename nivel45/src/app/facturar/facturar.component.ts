@@ -4,9 +4,10 @@ import { FacturaService } from '../services/factura/factura.service';
 import { ClienteService } from '../services/cliente/cliente.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ProductoService } from '../services/producto/producto.service';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { WebcamImage } from 'ngx-webcam';
 import { ProductoTabla } from '../interfaces/ProductoTabla'
+import { producto } from '../interfaces/producto';
 
 @Component({
   selector: 'app-facturar',
@@ -32,9 +33,16 @@ export class FacturarComponent {
   precioFinalModal: string = '';
   //fin Modal
 
+  //variable de control
+  totalFactura: number = 0;
+
   mostrarCamara: boolean = false;
   capturaTrigger: Subject<void> = new Subject<void>();
   facturacionModalSwitch: boolean = false;
+  public cameras: MediaDeviceInfo[] = [];
+  public myDevice!: MediaDeviceInfo;
+
+  private destroy$: Subject<void> = new Subject<void>();
 
   constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService) { }
 
@@ -76,6 +84,20 @@ export class FacturarComponent {
       this.actualizarPrecioT();
     });
 
+    this.addProductoFormModal.get('cantidadModal')?.valueChanges.subscribe((nuevoValorCantidad) => {
+      if (this.addProductoFormModal.get('cantidadModal')?.value !== '') {
+        this.actualizarPrecioF();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  actualizarTotalFactura(valorPorSumar: number){
+    this.totalFactura += valorPorSumar;
   }
 
   actualizarPrecioT() {
@@ -93,6 +115,28 @@ export class FacturarComponent {
     }
   }
 
+  actualizarPrecioF() {
+    console.log("inicio actualizacion de precio");
+    if (this.addProductoFormModal.get('nombreModal')?.value !== '') {
+      const cantidad = parseFloat(this.addProductoFormModal.get('cantidadModal')?.value);
+      const precioU = parseFloat(this.addProductoFormModal.get('precioUnitarioModal')?.value);
+
+      if (cantidad !== null && precioU !== null && !isNaN(cantidad) && !isNaN(precioU)) {
+        const precioT = parseFloat((cantidad * precioU).toFixed(2));
+
+        this.addProductoFormModal.patchValue({
+          precioFinalModal: precioT
+        });
+        console.log("Actualizacion correcta");
+      } else {
+        this.addProductoFormModal.get('precioFinalModal')?.setValue('');
+        console.log("Actualizacion fallida");
+      }
+    } else {
+      alert('Primero debe seleccionar un producto.');
+      this.addProductoFormModal.get('cantidadModal')?.setValue('');
+    }
+  }
   abrirModal(): void {
     this.facturacionModalSwitch = true;
   }
@@ -103,41 +147,29 @@ export class FacturarComponent {
     this.addProductoFormModal.reset();
   }
 
-  addItem() {
-    // Obtén los valores del formulario del modal
-    const nombre = this.addProductoFormModal.get('nombreModal')?.value;
-    const cantidad = this.addProductoFormModal.get('cantidadModal')?.value;
-    const proveedor = this.addProductoFormModal.get('proveedorModal')?.value;
-    const precioUnitario = this.addProductoFormModal.get('precioUnitarioModal')?.value;
-    const precioFinal = this.addProductoFormModal.get('precioFinalModal')?.value;
-  
-    // Crea un objeto ProductoModal
-    const nuevoProducto: ProductoTabla = {
-      cantidad: cantidad,
-      nombre: nombre,
-      precioUnitario: precioUnitario,
-      precioTotal: precioFinal,
-    };
-  
-    // Agrega el nuevo producto a la lista
-    this.productosTabla.push(nuevoProducto);
-  
-    // Limpia el formulario del modal o realiza otras acciones necesarias
-    this.addProductoFormModal.reset();
-  
-    // Cierra el modal
-    this.cerrarModal();
+  camerasFoundHandler(cameras: MediaDeviceInfo[]) {
+    this.cameras = cameras;
+
+    // Seleccionar la primera cámara por defecto
+    if (this.cameras.length > 0) {
+      this.selectCamera();
+    }
   }
 
-  abrirCamara() {
+  selectCamera() {
+    if (this.cameras.length > 0) {
+      this.myDevice = this.cameras[0];
+    }
     this.mostrarCamara = true;
-    this.capturaTrigger.next(); // Inicia la captura de la cámara
   }
 
-  capturarImagen(imagen: WebcamImage) {
-    // Lógica para manejar la imagen capturada
-    console.log('Imagen capturada:', imagen);
-    // Puedes guardar la imagen en una propiedad o procesarla según tus necesidades
+  scanSuccessHandler(event: string) {
+    this.buscarProductoPorId(event);
+    console.log(event);
+  }
+
+  scanErrorHandler(event: any) {
+    console.log("Hubo un error en el scanner " + event);
   }
 
   formatToMySQLDate(date: NgbDateStruct): string {
@@ -157,7 +189,7 @@ export class FacturarComponent {
   inputFocus() {
     this.mostrarDropdown = true;
   }
-  
+
   inputBlur() {
     // Espera un breve momento antes de ocultar el dropdown, para permitir hacer clic en él
     setTimeout(() => {
@@ -170,10 +202,10 @@ export class FacturarComponent {
       proveedorModal: producto.proveedor,
       precioUnitarioModal: producto.precio
     });
-  
+
     // Puedes asignar el valor al campo nombreModal si también deseas
     this.addProductoFormModal.get('nombreModal')?.setValue(producto.nombre);
-  
+
     // Oculta el dropdown después de seleccionar un producto
     this.mostrarDropdown = false;
   }
@@ -185,25 +217,58 @@ export class FacturarComponent {
   }
 
   agregarItemEspecial() {
-    // Obtén los valores del formulario
-    const cantidad = this.cuerpoFacturaForm.get('cantidad')?.value;
-    const descripcion = this.cuerpoFacturaForm.get('descripcion')?.value;
-    const precioU = this.cuerpoFacturaForm.get('precioU')?.value;
-    const precioT = this.cuerpoFacturaForm.get('precioT')?.value;
-  
-    // Crea un objeto ProductoTabla
-    const nuevoProducto: ProductoTabla = {
-      cantidad: cantidad,
-      nombre: descripcion,
-      precioUnitario: precioU,
-      precioTotal: precioT,
-    };
-  
-    // Agrega el nuevo producto a la lista
-    this.productosTabla.push(nuevoProducto);
-  
-    // Limpia el formulario o realiza otras acciones necesarias
-    this.cuerpoFacturaForm.reset();
+    if (this.cuerpoFacturaForm.get("cantidad")?.value !== '' && this.cuerpoFacturaForm.get("descripcion")?.value !== '' && this.cuerpoFacturaForm.get("precioU")?.value !== '' && this.cuerpoFacturaForm.get("precioT")?.value !== '') {
+      // Obtén los valores del formulario
+      const cantidad = this.cuerpoFacturaForm.get('cantidad')?.value;
+      const descripcion = this.cuerpoFacturaForm.get('descripcion')?.value;
+      const precioU = this.cuerpoFacturaForm.get('precioU')?.value;
+      const precioT = this.cuerpoFacturaForm.get('precioT')?.value;
+
+      // Crea un objeto ProductoTabla
+      const nuevoProducto: ProductoTabla = {
+        cantidad: cantidad,
+        nombre: descripcion,
+        precioUnitario: precioU,
+        precioTotal: precioT,
+      };
+
+      this.actualizarTotalFactura(precioT);
+      // Agrega el nuevo producto a la lista
+      this.productosTabla.push(nuevoProducto);
+
+      // Limpia el formulario o realiza otras acciones necesarias
+      this.cuerpoFacturaForm.reset();
+    }
+  }
+
+  agregarItemNormal() {
+    if (this.addProductoFormModal.get('cantidadModal')?.value !== '' && this.addProductoFormModal.get('nombreModal')?.value !== '' && this.addProductoFormModal.get('precioUnitarioModal')?.value !== '' && this.addProductoFormModal.get('precioFinalModal')?.value!== '' ) {
+      const cantidad = this.addProductoFormModal.get('cantidadModal')?.value;
+      const descripcion = this.addProductoFormModal.get('nombreModal')?.value;
+      const precioU = this.addProductoFormModal.get('precioUnitarioModal')?.value;
+      const precioT = this.addProductoFormModal.get('precioFinalModal')?.value;
+
+      // Crea un objeto ProductoTabla
+      const nuevoProducto: ProductoTabla = {
+        cantidad: cantidad,
+        nombre: descripcion,
+        precioUnitario: precioU,
+        precioTotal: precioT,
+      };
+
+      this.actualizarTotalFactura(precioT);
+      // Agrega el nuevo producto a la lista
+      this.productosTabla.push(nuevoProducto);
+      this.cerrarModal();
+    }
+  }
+
+  buscarProductoPorId(id: any) {
+    this.productoService.obtenerProductoPorId(id).subscribe((producto) => {
+      // Obtener el nombre del producto
+      console.log("nombre producto: " + producto[0].nombre)
+      this.addProductoFormModal.get("nombreModal")?.setValue(producto[0].nombre);
+    });
   }
 
   onInputChange() {

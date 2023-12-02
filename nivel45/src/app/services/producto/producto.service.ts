@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError } from 'rxjs';
+import { producto } from '../../interfaces/producto';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +25,10 @@ export class ProductoService {
   obtenerProductos(): Observable<any[]> {
     const url = `${this.apiUrl}/obtener-productos`;
     return this.http.get<any[]>(url);
+  }
+
+  obtenerProductoPorId(idProducto: string): Observable<producto[]> {
+    const url = `${this.apiUrl}/obtener-producto/${idProducto}`;
+    return this.http.get<producto[]>(url);
   }
 }

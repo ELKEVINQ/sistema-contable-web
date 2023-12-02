@@ -1,203 +1,209 @@
 <div class="container mt-3">
-  <!-- Primera Card: Facturar -->
-  <div class="card">
-      <div class="card-header bg-primary text-white">
-          <h4><i class="fa fa-shopping-cart"></i> Facturar</h4>
-      </div>
-      <div class="card-body">
-          <form *ngIf="facturaForm" [formGroup]="facturaForm" (ngSubmit)="onSubmit()">
-              <div class="row">
-                  <!-- Cedula -->
-                  <div class="col-md-2 mb-2">
-                      <label for="cedula" class="form-label">Cedula:</label>
-                      <input type="text" id="cedula" class="form-control" formControlName="cedula"
-                          (input)="onInputChange()" maxlength="10">
-                  </div>
-                  <!-- Nombres -->
-                  <div class="col-md-4 mb-2">
-                      <label for="nombres" class="form-label">Nombres:</label>
-                      <input type="text" id="nombres" class="form-control" formControlName="nombres" readonly
-                          value="{{nombres}}">
-                  </div>
-                  <div class="col-md-2 mt-4">
-                      <button class="btn btn-success" [routerLink]="['/p/add-cliente']">Añadir Cliente</button>
-                  </div>
-                  <!-- Fecha de Inicio -->
-                  <div class="col-md-3 mb-2">
-                      <label for="fecha" class="form-label">Fecha:</label>
-                      <div class="input-group">
-                          <input class="form-control form-control-sm" formControlName="fecha" ngbDatepicker
-                              #dp="ngbDatepicker" readonly />
-                          <div class="input-group-append">
-                              <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">
-                                  <i class="fa fa-calendar" aria-hidden="true"></i>
-                              </button>
-                          </div>
-                      </div>
-                      <div *ngIf="facturaForm.get('fecha')?.hasError('required')" class="text-danger">
-                          La fecha es obligatoria.
-                      </div>
-                  </div>
-              </div>
-              <!-- Botón de guardar -->
-              <div class="text-end mt-3">
-                  <button type="submit" class="btn btn-primary">Guardar</button>
-              </div>
-          </form>
-      </div>
-  </div>
+    <!-- Primera Card: Facturar -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="fa fa-shopping-cart"></i> Facturar</h4>
+        </div>
+        <div class="card-body">
+            <form *ngIf="facturaForm" [formGroup]="facturaForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                    <!-- Cedula -->
+                    <div class="col-md-2 mb-2">
+                        <label for="cedula" class="form-label">Cedula:</label>
+                        <input type="text" id="cedula" class="form-control" formControlName="cedula"
+                            (input)="onInputChange()" maxlength="10">
+                    </div>
+                    <!-- Nombres -->
+                    <div class="col-md-4 mb-2">
+                        <label for="nombres" class="form-label">Nombres:</label>
+                        <input type="text" id="nombres" class="form-control" formControlName="nombres" readonly
+                            value="{{nombres}}">
+                    </div>
+                    <div class="col-md-2 mt-4">
+                        <button class="btn btn-success" [routerLink]="['/p/add-cliente']">Añadir Cliente</button>
+                    </div>
+                    <!-- Fecha de Inicio -->
+                    <div class="col-md-3 mb-2">
+                        <label for="fecha" class="form-label">Fecha:</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" formControlName="fecha" ngbDatepicker
+                                #dp="ngbDatepicker" readonly />
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div *ngIf="facturaForm.get('fecha')?.hasError('required')" class="text-danger">
+                            La fecha es obligatoria.
+                        </div>
+                    </div>
+                </div>
+                <!-- Botón de guardar -->
+                <div class="text-end mt-3">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-  <!-- Segunda Card: Agregar Productos -->
-  <div class="card mt-3">
-      <div class="card-body">
-          <!-- Formulario para agregar productos -->
-          <form *ngIf="cuerpoFacturaForm" [formGroup]="cuerpoFacturaForm" (ngSubmit)="onSubmit()">
-              <!-- Barra de búsqueda de producto -->
-              <div class="row mb-3">
-                  <div class="col-md-6">
-                      <label for="buscarProducto" class="form-label">Buscar Producto:</label>
-                      <div class="input-group">
-                          <button class="btn btn-sm btn-outline-secondary" type="button" (click)="abrirModal()">
-                              <i class="fa fa-search"> Scan</i>
-                          </button>
-                      </div>
-                  </div>
-              </div>
-              <div class="row mb-3">
-                  <!-- Botón "Añadir Item Especial" -->
-                  <div class="col-md-4 mt-4" *ngIf="!mostrar">
-                      <button class="btn btn-success" type="button" (click)="mostrarCamposAdicionales()">
-                          Añadir Item Especial
-                      </button>
-                  </div>
-                  <!-- Botón "Añadir Item Especial" -->
-                  <div class="col-md-4 mt-4" *ngIf="mostrar">
-                      <button class="btn btn-danger" type="button" (click)="mostrarCamposAdicionales()">
-                          Ocultar Items
-                      </button>
-                  </div>
-              </div>
+    <!-- Segunda Card: Agregar Productos -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <!-- Formulario para agregar productos -->
+            <form *ngIf="cuerpoFacturaForm" [formGroup]="cuerpoFacturaForm" (ngSubmit)="onSubmit()">
+                <!-- Barra de búsqueda de producto -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="buscarProducto" class="form-label">Buscar Producto:</label>
+                        <div class="input-group">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" (click)="abrirModal()">
+                                <i class="fa fa-search"> Scan</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <!-- Botón "Añadir Item Especial" -->
+                    <div class="col-md-4 mt-4" *ngIf="!mostrar">
+                        <button class="btn btn-success" type="button" (click)="mostrarCamposAdicionales()">
+                            Añadir Item Especial
+                        </button>
+                    </div>
+                    <!-- Botón "Añadir Item Especial" -->
+                    <div class="col-md-4 mt-4" *ngIf="mostrar">
+                        <button class="btn btn-danger" type="button" (click)="mostrarCamposAdicionales()">
+                            Ocultar Items
+                        </button>
+                    </div>
+                </div>
 
-              <!-- Campos adicionales (inicialmente ocultos) -->
-              <div class="row mb-1" *ngIf="mostrar">
-                  <div class="col-md-1">
-                      <label for="cantidad" class="form-label">Cantidad:</label>
-                      <input type="text" id="cantidad" class="form-control" formControlName="cantidad"
-                          (keypress)="validarEntrada($event)">
-                  </div>
+                <!-- Campos adicionales (inicialmente ocultos) -->
+                <div class="row mb-1" *ngIf="mostrar">
+                    <div class="col-md-1">
+                        <label for="cantidad" class="form-label">Cantidad:</label>
+                        <input type="text" id="cantidad" class="form-control" formControlName="cantidad"
+                            (keypress)="validarEntrada($event)">
+                    </div>
 
-                  <div class="col-md-8">
-                      <label for="descripcion" class="form-label">Descripción:</label>
-                      <input type="text" id="descripcion" class="form-control" formControlName="descripcion">
-                  </div>
+                    <div class="col-md-8">
+                        <label for="descripcion" class="form-label">Descripción:</label>
+                        <input type="text" id="descripcion" class="form-control" formControlName="descripcion">
+                    </div>
 
-                  <div class="col-md-1">
-                      <label for="precioU" class="form-label">Precio U:</label>
-                      <input type="text" id="precioU" class="form-control" formControlName="precioU"
-                          (keypress)="validarEntrada($event)">
-                  </div>
-                  <div class="col-md-1">
-                      <label for="precioT" class="form-label">Precio T:</label>
-                      <input type="text" id="precioT" class="form-control" formControlName="precioT" readonly>
-                  </div>
-                  <!-- Boton de agregar -->
-                  <div class="col-md-1 mt-4">
-                      <button class="btn btn-success" type="button" (click)="agregarItemEspecial()">
-                          <i class="fa fa-plus"></i>
-                      </button>
-                  </div>
-              </div>
-              <!-- Tabla de productos -->
-              <div class="row">
-                  <table class="table table-sm">
-                      <thead>
-                          <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">Cantidad</th>
-                              <th scope="col">Nombre</th>
-                              <th scope="col">Precio Unitario</th>
-                              <th scope="col">Precio Total</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <!-- Itera sobre la lista de productosTabla para llenar la tabla -->
-                          <tr *ngFor="let producto of productosTabla; let i = index">
-                              <th scope="row">{{ i + 1 }}</th>
-                              <td>{{ producto.cantidad }}</td>
-                              <td>{{ producto.nombre }}</td>
-                              <td>{{ producto.precioUnitario }}</td>
-                              <td>{{ producto.precioTotal }}</td>
-                          </tr>
-                      </tbody>
-                  </table>
-              </div>
+                    <div class="col-md-1">
+                        <label for="precioU" class="form-label">Precio U:</label>
+                        <input type="text" id="precioU" class="form-control" formControlName="precioU"
+                            (keypress)="validarEntrada($event)">
+                    </div>
+                    <div class="col-md-1">
+                        <label for="precioT" class="form-label">Precio T:</label>
+                        <input type="text" id="precioT" class="form-control" formControlName="precioT" readonly>
+                    </div>
+                    <!-- Boton de agregar -->
+                    <div class="col-md-1 mt-4">
+                        <button class="btn btn-success" type="button" (click)="agregarItemEspecial()">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Tabla de productos -->
+                <div class="row">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Precio Unitario</th>
+                                <th scope="col">Precio Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Itera sobre la lista de productosTabla para llenar la tabla -->
+                            <tr *ngFor="let producto of productosTabla; let i = index">
+                                <th scope="row">{{ i + 1 }}</th>
+                                <td>{{ producto.cantidad }}</td>
+                                <td>{{ producto.nombre }}</td>
+                                <td>{{ producto.precioUnitario }}</td>
+                                <td>{{ producto.precioTotal }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-              <!-- Total -->
-              <div class="row">
-                  <div class="col">
-                      <p class="text-end">Total</p>
-                      <div class="text-end" contenteditable="false">XXX.XX</div>
-                  </div>
-              </div>
-          </form>
-      </div>
-  </div>
+                <!-- Total -->
+                <div class="row">
+                    <div class="col">
+                        <p class="text-end">Total</p>
+                        <div class="text-end" contenteditable="false">{{totalFactura}}</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div *ngIf="facturacionModalSwitch" class="overlay">
-  <div class="modalAñadirItem card input-group">
-      <div class="card input-group">
-          <div class="row g-1">
-              <!-- Columna izquierda -->
-              <div class="col" style="margin: 2%;">
-                  <form [formGroup]="addProductoFormModal" (ngSubmit)="addItem()">
-                      <label for="nombreModal" class="form-label">Nombre:</label>
-                      <input type="text" id="nombreModal" class="form-control" formControlName="nombreModal"
-                          (focus)="mostrarDropdown = true" (blur)="inputBlur()">
-                      <div *ngIf="mostrarDropdown && addProductoFormModal.get('nombreModal')?.value !=''"
-                          class="dropdown">
-                          <div
-                              *ngFor="let producto of filtrarProductos(addProductoFormModal.get('nombreModal')?.value)">
-                              <div class="dropdown-item" (click)="seleccionarProducto(producto)">
-                                  {{ producto.nombre }}
-                              </div>
-                          </div>
-                      </div>
+    <div class="modalAñadirItem card input-group">
+        <div class="card input-group">
+            <div class="row g-1">
+                <!-- Columna izquierda -->
+                <div class="col" style="margin: 2%;">
+                    <form [formGroup]="addProductoFormModal">
+                        <label for="nombreModal" class="form-label">Nombre:</label>
+                        <input type="text" id="nombreModal" class="form-control" formControlName="nombreModal"
+                            (focus)="mostrarDropdown = true" (blur)="inputBlur()">
+                        <div *ngIf="mostrarDropdown && addProductoFormModal.get('nombreModal')?.value !=''"
+                            class="dropdown">
+                            <div
+                                *ngFor="let producto of filtrarProductos(addProductoFormModal.get('nombreModal')?.value)">
+                                <div class="dropdown-item" (click)="seleccionarProducto(producto)">
+                                    {{ producto.nombre }}
+                                </div>
+                            </div>
+                        </div>
 
-                      <label for="cantidadModal" class="form-label mt-2">Cantidad:</label>
-                      <input type="text" id="cantidadModal" class="form-control" formControlName="cantidadModal">
+                        <label for="cantidadModal" class="form-label mt-2">Cantidad:</label>
+                        <input type="text" id="cantidadModal" class="form-control" formControlName="cantidadModal"
+                            (keypress)="validarEntrada($event)">
 
-                      <label for="proveedorModal" class="form-label mt-2">Proveedor:</label>
-                      <input type="text" id="proveedorModal" class="form-control" formControlName="proveedorModal"
-                          readonly>
+                        <label for="proveedorModal" class="form-label mt-2">Proveedor:</label>
+                        <input type="text" id="proveedorModal" class="form-control" formControlName="proveedorModal"
+                            readonly>
 
-                      <label for="precioUnitarioModal" class="form-label mt-2">Precio Unitario:</label>
-                      <input type="text" id="precioUnitarioModal" class="form-control"
-                          formControlName="precioUnitarioModal" readonly>
+                        <label for="precioUnitarioModal" class="form-label mt-2">Precio Unitario:</label>
+                        <input type="text" id="precioUnitarioModal" class="form-control"
+                            formControlName="precioUnitarioModal" readonly>
 
-                      <label for="precioFinalModal" class="form-label mt-2" readonly>Precio Final:</label>
-                      <input type="text" id="precioFinalModal" class="form-control" formControlName="precioFinalModal"
-                          readonly>
-                  </form>
-              </div>
+                        <label for="precioFinalModal" class="form-label mt-2" readonly>Precio Final:</label>
+                        <input type="text" id="precioFinalModal" class="form-control" formControlName="precioFinalModal"
+                            readonly>
+                    </form>
+                </div>
 
-              <!-- Columna derecha -->
-              <div class="col" style="margin: 2%;">
-                  <webcam *ngIf="mostrarCamara" [width]="400" [height]="350" [trigger]="capturaTrigger"
-                      (imageCapture)="capturarImagen($event)"></webcam>
-                  <button class="btn btn-primary mt-2" (click)="abrirCamara()">Abrir Cámara</button>
-              </div>
-          </div>
+                <!-- Columna derecha -->
+                <div class="col" style="margin: 2%;">
+                    <select #selectList (change)="selectCamera()">
+                        <option *ngFor="let camera of cameras" [value]="camera.label">
+                            {{ camera.label }}
+                        </option>
+                    </select>
+                    <zxing-scanner style="width: 500px;" [enable]="mostrarCamara" [device]="myDevice"
+                        (camerasFound)="camerasFoundHandler($event)" (scanSuccess)="scanSuccessHandler($event)"
+                        (scanError)="scanErrorHandler($event)"></zxing-scanner>
+                </div>
+            </div>
 
-          <div class="modal_body card-body">
-              <div class="row mb-1 g-1">
-                  <h5 class="card-title">Añadir fila</h5>
-              </div>
-              <div class="row mb-1">
-                  <button type="button" (click)="cerrarModal()" class="btn btn-danger btn-sm">Cancelar</button>
-                  <button type="submit" class="btn btn-success btn-sm">Aceptar</button>
-              </div>
-          </div>
-      </div>
-  </div>
+            <div class="modal_body card-body">
+                <div class="row mb-1 g-1">
+                    <h5 class="card-title">Añadir fila</h5>
+                </div>
+                <div class="row mb-1">
+                    <button type="button" (click)="cerrarModal()" class="btn btn-danger btn-sm">Cancelar</button>
+                    <button type="submit" (click)="agregarItemNormal()" class="btn btn-success btn-sm">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

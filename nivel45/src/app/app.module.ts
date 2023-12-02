@@ -31,6 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AddClienteComponent } from './add-cliente/add-cliente.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WebcamModule } from 'ngx-webcam';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import { WebcamModule } from 'ngx-webcam';
     HttpClientModule,
     NgbModule,
     WebcamModule,
+    ZXingScannerModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
