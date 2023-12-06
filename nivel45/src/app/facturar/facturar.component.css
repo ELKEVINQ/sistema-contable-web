@@ -69,4 +69,19 @@
     cursor: pointer;
 }
 
+.data-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 160px;
+    float: right;
+}
+
+.data-container-inner{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
 /* Puedes ajustar estos estilos según tus preferencias */

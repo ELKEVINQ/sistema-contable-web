@@ -5,7 +5,7 @@
             <h4><i class="fa fa-shopping-cart"></i> Facturar</h4>
         </div>
         <div class="card-body">
-            <form *ngIf="facturaForm" [formGroup]="facturaForm" (ngSubmit)="onSubmit()">
+            <form *ngIf="facturaForm" [formGroup]="facturaForm">
                 <div class="row">
                     <!-- Cedula -->
                     <div class="col-md-2 mb-2">
@@ -38,12 +38,47 @@
                             La fecha es obligatoria.
                         </div>
                     </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="form-check" id="form-check">
+                            <input class="form-check-input" type="checkbox" id="perteneceObra"
+                                formControlName="perteneceObra" (change)="toogleObra()">
+                            <label class="form-check-label" for="perteneceObra">Pertenece a una obra</label>
+                        </div>
+                    </div>
                 </div>
                 <!-- Botón de guardar -->
                 <div class="text-end mt-3">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-primary" (click)="guardarFactura()">Guardar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="card mt-3 obras-en-proceso" *ngIf="tieneObra">
+        <div class="card-body">
+            <h3>Obras en Proceso</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Número</th>
+                            <th>Descripción</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let obra of obras" (click)="seleccionarObra(obra)">
+                            <td>{{ obra.cedula }}</td>
+                            <td>{{ obra.numero }}</td>
+                            <td>{{ obra.descripcion }}</td>
+                            <td>{{ obra.total | currency:'USD':'symbol':'1.2-2' }}</td>
+                            <td>{{ obra.estado }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -51,7 +86,7 @@
     <div class="card mt-3">
         <div class="card-body">
             <!-- Formulario para agregar productos -->
-            <form *ngIf="cuerpoFacturaForm" [formGroup]="cuerpoFacturaForm" (ngSubmit)="onSubmit()">
+            <form *ngIf="cuerpoFacturaForm" [formGroup]="cuerpoFacturaForm">
                 <!-- Barra de búsqueda de producto -->
                 <div class="row mb-3">
                     <div class="col-md-6">
@@ -132,11 +167,19 @@
                     </table>
                 </div>
 
-                <!-- Total -->
-                <div class="row">
-                    <div class="col">
-                        <p class="text-end">Total</p>
-                        <div class="text-end" contenteditable="false">{{totalFactura}}</div>
+                <!-- Contenedor de totales -->
+                <div class="data-container">
+                    <div class="data-container-inner">
+                        <p>SubTotal</p>
+                        <div contenteditable="false">{{subTotalFactura}}</div>
+                    </div>
+                    <div class="data-container-inner">
+                        <p>Iva (12%)</p>
+                        <div contenteditable="false">{{ivaFactura}}</div>
+                    </div>
+                    <div class="data-container-inner">
+                        <p>Total</p>
+                        <div contenteditable="false">{{totalFactura}}</div>
                     </div>
                 </div>
             </form>

@@ -8,6 +8,9 @@ import { Subject, of } from 'rxjs';
 import { WebcamImage } from 'ngx-webcam';
 import { ProductoTabla } from '../interfaces/ProductoTabla'
 import { producto } from '../interfaces/producto';
+import { get } from 'http';
+import { parse } from 'path';
+import { ObraService } from '../services/obras/obras.service';
 
 @Component({
   selector: 'app-facturar',
@@ -24,6 +27,9 @@ export class FacturarComponent {
   cedula: string = '';
   nombres: string = '';
 
+  idObra: string = '';
+  obras: any[] = [];
+
   mostrarDropdown = false;
   //modal
   nombreModal: string = '';
@@ -34,9 +40,13 @@ export class FacturarComponent {
   //fin Modal
 
   //variable de control
+  subTotalFactura: number = 0;
+  descuentoFactura: number = 0;
+  ivaFactura: number = 0;
   totalFactura: number = 0;
 
   mostrarCamara: boolean = false;
+  tieneObra: boolean = false;
   capturaTrigger: Subject<void> = new Subject<void>();
   facturacionModalSwitch: boolean = false;
   public cameras: MediaDeviceInfo[] = [];
@@ -44,7 +54,7 @@ export class FacturarComponent {
 
   private destroy$: Subject<void> = new Subject<void>();
 
-  constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService) { }
+  constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService, private obraService: ObraService) { }
 
   ngOnInit(): void {
     this.productoService.obtenerProductos().subscribe((data: any[]) => {
@@ -58,6 +68,7 @@ export class FacturarComponent {
       iva: [''],
       descuento: [''],
       total: [''],
+      perteneceObra: [''],
     });
     this.cuerpoFacturaForm = this.fb.group({
       precioS: [''],
@@ -96,8 +107,35 @@ export class FacturarComponent {
     this.destroy$.complete();
   }
 
-  actualizarTotalFactura(valorPorSumar: number){
-    this.totalFactura += valorPorSumar;
+  toogleObra() {
+    this.tieneObra = !this.tieneObra;
+    this.facturaForm.get('perteneceObra')?.value(this.tieneObra);
+  }
+
+  abrirListaObras() {
+    this.obraService.obtenerObrasCedula(this.facturaForm.get('cedula')?.value).subscribe((data: any[]) => {
+      // Filtrar las obras con estado "En Proceso"
+      const obrasEnProceso = data.filter(obra => obra.estado === 'En Proceso');
+
+      // Agregar las obras filtradas al array 'obras'
+      this.obras.push(...obrasEnProceso);
+    });
+  }
+
+  seleccionarObra(obra: any) {
+    // Aquí puedes realizar cualquier acción que desees con la obra seleccionada
+    this.idObra = obra.idObra;
+    this.toogleObra();
+    // Puedes, por ejemplo, abrir un modal, navegar a otra página, etc.
+  }
+
+  actualizarTotalFactura(valorPorSumar: number) {
+    this.totalFactura = this.totalFactura + valorPorSumar;
+    this.totalFactura = parseFloat(this.totalFactura.toFixed(2));
+    this.ivaFactura = this.totalFactura * 0.12;
+    this.ivaFactura = parseFloat(this.ivaFactura.toFixed(2));
+    this.subTotalFactura = this.totalFactura - (this.ivaFactura);
+    this.subTotalFactura = parseFloat(this.subTotalFactura.toFixed(2));
   }
 
   actualizarPrecioT() {
@@ -137,6 +175,7 @@ export class FacturarComponent {
       this.addProductoFormModal.get('cantidadModal')?.setValue('');
     }
   }
+
   abrirModal(): void {
     this.facturacionModalSwitch = true;
   }
@@ -205,6 +244,9 @@ export class FacturarComponent {
 
     // Puedes asignar el valor al campo nombreModal si también deseas
     this.addProductoFormModal.get('nombreModal')?.setValue(producto.nombre);
+    if (this.addProductoFormModal.get('cantidadModal')?.value !== '') {
+      this.addProductoFormModal.get('precioFinalModal')?.setValue(this.addProductoFormModal.get('cantidadModal')?.value * producto.precio);
+    }
 
     // Oculta el dropdown después de seleccionar un producto
     this.mostrarDropdown = false;
@@ -242,7 +284,7 @@ export class FacturarComponent {
   }
 
   agregarItemNormal() {
-    if (this.addProductoFormModal.get('cantidadModal')?.value !== '' && this.addProductoFormModal.get('nombreModal')?.value !== '' && this.addProductoFormModal.get('precioUnitarioModal')?.value !== '' && this.addProductoFormModal.get('precioFinalModal')?.value!== '' ) {
+    if (this.addProductoFormModal.get('cantidadModal')?.value !== '' && this.addProductoFormModal.get('nombreModal')?.value !== '' && this.addProductoFormModal.get('precioUnitarioModal')?.value !== '' && this.addProductoFormModal.get('precioFinalModal')?.value !== '') {
       const cantidad = this.addProductoFormModal.get('cantidadModal')?.value;
       const descripcion = this.addProductoFormModal.get('nombreModal')?.value;
       const precioU = this.addProductoFormModal.get('precioUnitarioModal')?.value;
@@ -277,10 +319,10 @@ export class FacturarComponent {
       this.clienteService.obtenerCliente(this.cedula).subscribe((clientes) => {
         // Filtrar el cliente por la cédula
         const clienteEncontrado = clientes.find(cliente => cliente.cedula === this.cedula);
-
         if (clienteEncontrado) {
           // Si se encuentra el cliente, asignar el valor al campo número en el formulario
           this.facturaForm.get('nombres')?.setValue(clienteEncontrado.nombres + " " + clienteEncontrado.apellidos);
+          this.abrirListaObras();
         }
       });
     } else {
@@ -299,33 +341,50 @@ export class FacturarComponent {
     }
   }
 
-  onSubmit() {
+  checkBeforeSend(): boolean {
+    if (this.facturaForm.get("cedula")?.value !== '' && this.facturaForm.get("nombres")?.value !== '' && this.facturaForm.get("fecha")?.value !== ''
+      && this.productosTabla.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  guardarFactura() {
     // Verificar si el formulario es válido
-    if (this.facturaForm.valid) {
-      // Obtener el valor del campo de nombre
-      const nombreControl = this.facturaForm.get('nombre');
-
-      // Verificar si el campo de nombre está presente y no es undefined
-      if (nombreControl && nombreControl.hasError('required')) {
-        alert('El campo de nombre no puede estar vacío. El empleado no es válido.');
-        return; // No hacer la inserción si el nombre está vacío
-      }
-
+    if (this.checkBeforeSend()) {
       // Obtener los valores del formulario
-      const { cedula, fecha_entrada, sueldo, estado } = this.facturaForm.value;
+      const { cedula, fecha } = this.facturaForm.value;
 
-      const fechaFormateada = this.formatToMySQLDate(fecha_entrada);
+      // Formatear la fecha a un formato compatible con MySQL
+      const fechaFormateada = this.formatToMySQLDate(fecha);
 
-      // Realizar la solicitud al servicio de empleados para insertar el empleado
-      this.facturaService.insertarFactura({ cedula, fecha_entrada: fechaFormateada, sueldo, estado: "Activo" }).subscribe((response: any) => {
+      // Crear el objeto de factura
+      const facturaData = {
+        idFactura: '0000-0000-0003',
+        cedula,
+        fecha: fechaFormateada,
+        subtotal: this.subTotalFactura,
+        iva: this.ivaFactura,
+        descuento: this.descuentoFactura,
+        total: this.totalFactura,
+        estado: "Valida",
+        idObra: this.idObra,
+        // Agrega aquí los demás campos necesarios para la factura
+      };
+
+      // Realizar la solicitud al servicio de facturas para insertar la factura y sus detalles
+      this.facturaService.insertarFactura(facturaData, this.productosTabla).subscribe((response: any) => {
         if (response.success) {
-          alert('Empleado insertado correctamente');
+          alert('Factura insertada correctamente');
         } else {
-          alert('Error al insertar el empleado');
+          alert('Error al insertar la factura');
         }
       });
+      console.log("Datos Factura: " + facturaData);
+      console.log("Datos detalle " + this.productosTabla)
     } else {
-      alert('Alguno de los campos esta vacio');
+      alert('Alguno de los campos está vacío');
     }
   }
 }

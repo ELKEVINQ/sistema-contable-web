@@ -262,6 +262,23 @@ app.get('/obtener-obra/:cedula', (req, res) => {
     });
 });
 
+// Ruta para busqueda de obras con cedula
+app.get('/obtener-obras-cedula/:cedula', (req, res) => {
+    const cedula = req.params.cedula;
+
+    // Consulta SQL para obtener la cantidad de obras asociadas a la cédula
+    const consulta = 'SELECT * FROM obras WHERE cedula = ?';
+
+    db.query(consulta, [cedula], (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener las obras:', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            res.json(resultados);
+        }
+    });
+});
+
 // Ruta para obtener los registros de los 4 tipos
 app.get('/obtener-registros', (req, res) => {
     const consulta = `
@@ -536,6 +553,42 @@ app.get('/obtener-empleado/:cedula', (req, res) => {
         }
     });
 });
+
+//Ruta para insertar facturas
+app.post('/insertar-factura', (req, res) => {
+    const { factura, detalles } = req.body;
+
+    const facturaConsulta = 'INSERT INTO `factura`(`idFactura`, `cedula`, `fecha`, `subtotal`, `iva`, `descuento`, `total`, `estado`, `idObra`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+    db.query(facturaConsulta, [factura.idFactura, factura.cedula, factura.fecha, factura.subtotal, factura.iva, 0, factura.total, factura.estado, factura.idObra], (error, resultados) => {
+        if (error) {
+            console.error('Error en la inserción de la factura:', error);
+            res.json({ success: false });
+        } else {
+            console.log('Factura insertada correctamente');
+
+            // Ahora insertamos los detalles de la factura
+            const detallesConsulta = 'INSERT INTO `detallefactura`(`idFactura`, `numero`, `cantidad`, `descripcion`, `precioTotal`) VALUES (?, ?, ?, ?, ?)';
+
+            detalles.forEach((detalle, index) => {
+                const numeroDetalle = index + 1;  // Empieza desde 1
+
+                db.query(detallesConsulta, [factura.idFactura, numeroDetalle, detalle.cantidad, detalle.nombre,  detalle.precioTotal], (errorDetalles) => {
+                    if (errorDetalles) {
+                        console.error('Error en la inserción del detalle de la factura:', errorDetalles);
+                        res.json({ success: false });
+                    }else{
+                        console.log("ingreso correcto");
+                    }
+                });
+            });
+
+
+            res.json({ success: true });
+        }
+    });
+});
+
 // Otras rutas y lógica del servidor...
 
 //Funcion especial para ingreso general de registro en las tablas monetarias

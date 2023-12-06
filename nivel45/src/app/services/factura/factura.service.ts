@@ -10,14 +10,15 @@ export class FacturaService {
 
   constructor(private http: HttpClient) {}
 
-
-  insertarFactura(facturaData: any): Observable<any> {
+  insertarFactura(facturaData: any, detallesFactura: any[]): Observable<any> {
     const url = `${this.apiUrl}/insertar-factura`;
-    return this.http.post<any>(url, facturaData)
+    const body = { factura: facturaData, detalles: detallesFactura };
+  
+    return this.http.post<any>(url, body)
       .pipe(
         catchError((error) => {
           console.error('Error en la solicitud HTTP:', error);
-          throw error; // Propaga el error para que otros puedan manejarlo
+          throw error;
         })
       );
   }

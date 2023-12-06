@@ -35,4 +35,9 @@ export class ObraService {
     const url = `${this.apiUrl}/obtener-obra/${cedula}`;
     return this.http.get<ObrasResponse>(url);
   }
+
+  obtenerObrasCedula(cedula: string): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-obras-cedula/${cedula}`;
+    return this.http.get<any[]>(url);
+  }
 }
