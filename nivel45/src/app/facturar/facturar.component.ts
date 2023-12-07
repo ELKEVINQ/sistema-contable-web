@@ -361,7 +361,7 @@ export class FacturarComponent {
 
       // Crear el objeto de factura
       const facturaData = {
-        idFactura: '0000-0000-0003',
+        idFactura: '0000-0000-0004',
         cedula,
         fecha: fechaFormateada,
         subtotal: this.subTotalFactura,

@@ -573,11 +573,11 @@ app.post('/insertar-factura', (req, res) => {
             detalles.forEach((detalle, index) => {
                 const numeroDetalle = index + 1;  // Empieza desde 1
 
-                db.query(detallesConsulta, [factura.idFactura, numeroDetalle, detalle.cantidad, detalle.nombre,  detalle.precioTotal], (errorDetalles) => {
+                db.query(detallesConsulta, [factura.idFactura, numeroDetalle, detalle.cantidad, detalle.nombre, detalle.precioTotal], (errorDetalles) => {
                     if (errorDetalles) {
                         console.error('Error en la inserción del detalle de la factura:', errorDetalles);
                         res.json({ success: false });
-                    }else{
+                    } else {
                         console.log("ingreso correcto");
                     }
                 });
@@ -585,6 +585,23 @@ app.post('/insertar-factura', (req, res) => {
 
 
             res.json({ success: true });
+        }
+    });
+});
+
+//Ruta para obtener facturas
+app.get('/obtener-facturas', (req, res) => {
+    const consulta = `
+    SELECT factura.*, CONCAT(persona.nombres, ' ', persona.apellidos) AS nombres
+    FROM factura
+    JOIN persona ON factura.cedula = persona.cedula`;
+    db.query(consulta, (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener la lista de facturas:', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            console.log(resultados);
+            res.json(resultados);
         }
     });
 });

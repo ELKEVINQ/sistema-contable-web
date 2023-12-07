@@ -22,4 +22,9 @@ export class FacturaService {
         })
       );
   }
+  
+  obtenerFacturas(): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-facturas`;
+    return this.http.get<any[]>(url);
+  }
 }
