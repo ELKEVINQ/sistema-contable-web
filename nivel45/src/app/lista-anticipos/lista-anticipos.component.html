@@ -1,13 +1,10 @@
-<p>
-  lista-anticipos works!
-</p>
 <!-- lista-anticipos.component.html -->
 
 <div>
-  <h1><i class="fa fa-money"></i> Lista de Anticipos</h1>
+  <h1><i class="fa fa-money"></i> Control Monetario de obra</h1>
 </div>
 <div>
-  <h5>Total de la obra Original: {{totalObraOriginal}} <br/> Saldo Actual: {{totalObraActual}}</h5>
+  <h5>Total de la obra Original: {{totalObraOriginal}}</h5>
 </div>
 
 
@@ -17,6 +14,8 @@
       <th scope="col">Número</th>
       <th scope="col">Nombre y Apellido</th>
       <th scope="col">Valor del Anticipo</th>
+      <th scope="col">Valor del Gasto</th>
+      <th scope="col">Total del Gasto</th>
       <th scope="col">Saldo</th>
       <!-- Agrega aquí más columnas según tus necesidades -->
     </tr>
@@ -26,6 +25,8 @@
       <td>{{ i + 1 }}</td>
       <td>{{ nombres }} {{ apellidos }}</td>
       <td>{{ anticipo.valor }}</td>
+      <td>{{ anticipo.gasto }}</td>
+      <td>{{ calcularGasto(anticipo.gasto, i) }}</td>
       <td>{{ calcularSaldo(anticipo.valor, i) }}</td>
     </tr>
   </tbody>

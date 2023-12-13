@@ -140,27 +140,38 @@ app.post('/insertar-anticipo', (req, res) => {
                 } else {
                     console.log('Registro insertado correctamente', resultadosRegistro);
                     res.json({ success: true });
-                }
+                } valor
             });
         }
     });
 });
 
 // Ruta para la búsqueda de anticipos según la obra
-app.get('/obtener-anticipos/:idObra', (req, res) => {
+app.get('/obtener-anticipos-y-gastos/:idObra', (req, res) => {
     const idObra = req.params.idObra;
 
     const consulta = `
         SELECT 
-            anticipo.*,
+            anticipo.valor AS valor,
+            NULL AS gasto,
             obras.total AS totalObra
         FROM anticipo
         INNER JOIN obras ON anticipo.idObra = obras.idObra
-        WHERE anticipo.idObra = ? ORDER BY anticipo.idAnticipo ASC`;
+        WHERE anticipo.idObra = ?
 
-    db.query(consulta, [idObra], (error, resultados) => {
+        UNION
+
+        SELECT 
+            NULL AS valor,
+            gastos.valor AS gasto,
+            obras.total AS totalObra
+        FROM gastos
+        INNER JOIN obras ON gastos.idObra = obras.idObra
+        WHERE gastos.idObra = ?`;
+
+    db.query(consulta, [idObra, idObra], (error, resultados) => {
         if (error) {
-            console.error('Error al obtener la lista de anticipos:', error);
+            console.error('Error al obtener la lista de anticipos y gastos:', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
         } else {
             console.log(resultados);
@@ -168,6 +179,9 @@ app.get('/obtener-anticipos/:idObra', (req, res) => {
         }
     });
 });
+
+
+
 
 // Ruta para la inserción de roles
 app.post('/insertar-rol', (req, res) => {
@@ -203,13 +217,13 @@ app.post('/insertar-rol', (req, res) => {
 
 // Ruta para la inserción de obras
 app.post('/insertar-obra', (req, res) => {
-    const { cedula, numero, descripcion, total, fechaInicio } = req.body;
+    const { cedula, numero, descripcion, total, fechaInicio, estado } = req.body;
 
     // Consulta SQL para la inserción
-    const consulta = 'INSERT INTO `obras` (`cedula`, `numero`, `descripcion`, `total`, `fechaInicio`)VALUES (?, ?, ?, ?, ?)';
+    const consulta = 'INSERT INTO `obras` (`cedula`, `numero`, `descripcion`, `total`, `fechaInicio`, `estado`)VALUES (?, ?, ?, ?, ?, ?)';
 
     // Ejecuta la consulta con los datos proporcionados
-    db.query(consulta, [cedula, numero, descripcion, total, fechaInicio], (error, resultados) => {
+    db.query(consulta, [cedula, numero, descripcion, total, fechaInicio, estado], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción de obra:', error);
             res.json({ success: false });
@@ -284,7 +298,7 @@ app.get('/obtener-registros', (req, res) => {
     const consulta = `
     SELECT
     registro.*,
-    COALESCE(saldo.valor, anticipo.valor, gastos.valor, roldepago.valor) AS valor,
+    TRUNCATE(COALESCE(saldo.valor, anticipo.valor, gastos.valor, roldepago.valor), 2) AS valor,
     CASE
         WHEN registro.idSaldo > 0 THEN 'Saldo'
         WHEN registro.idAnticipo > 0 THEN 'Anticipo'
@@ -369,7 +383,7 @@ app.get('/obtener-proveedores', (req, res) => {
 
 // Ruta para la insercion de facturas de compra con gastos
 app.post('/insertar-factura-compra', (req, res) => {
-    const { idFacturaCompra, idProveedor, fecha, valor, descripcion } = req.body;
+    const { idFacturaCompra, idProveedor, fecha, valor, descripcion, idObra } = req.body;
 
     // Consulta SQL para la inserción de la factura de compra
     const consultaFacturaCompra = 'INSERT INTO `facturacompra` (`idFacturaCompra`, `idProveedor`, `fecha`, `valor`) VALUES (?, ?, ?, ?)';
@@ -381,24 +395,27 @@ app.post('/insertar-factura-compra', (req, res) => {
             res.json({ success: false });
         } else {
             // Consulta SQL para la inserción del gasto
-            const consultaGasto = 'INSERT INTO `gastos` (`idFacturaCompra`, `valor`) VALUES (?, ?)';
+            const consultaGasto = 'INSERT INTO `gastos` (`valor`, `idFacturaCompra`, `idObra`) VALUES (?, ?, ?)';
 
             // Ejecutar la consulta del gasto
-            db.query(consultaGasto, [idFacturaCompra, valor], (errorGasto, resultadosGasto) => {
+            db.query(consultaGasto, [valor, idFacturaCompra, idObra], (errorGasto, resultadosGasto) => {
                 if (errorGasto) {
                     console.error('Error en la inserción del gasto:', errorGasto);
                     res.json({ success: false });
+                }else{
+                    const idGasto = resultadosGasto.insertId;
+                    // Llamar a la función para insertar en registro
+                    insertarRegistro('idGasto', fecha, descripcion, valor, idGasto, (errorRegistro, resultadosRegistro) => {
+                        if (errorRegistro) {
+                            console.error('Error al insertar en registro:', errorRegistro);
+                            res.json({ success: false });
+                        } else {
+                            console.log('Registro insertado correctamente', resultadosRegistro);
+                            res.json({ success: true });
+                        }
+                    });
                 }
-                // Llamar a la función para insertar en registro
-                insertarRegistro('idGasto', fecha, descripcion, valor, resultadosGasto.insertId, (errorRegistro, resultadosRegistro) => {
-                    if (errorRegistro) {
-                        console.error('Error al insertar en registro:', errorRegistro);
-                        res.json({ success: false });
-                    } else {
-                        console.log('Registro insertado correctamente', resultadosRegistro);
-                        res.json({ success: true });
-                    }
-                });
+                
             });
         }
     });
@@ -406,15 +423,15 @@ app.post('/insertar-factura-compra', (req, res) => {
 
 // Ruta para la insercion de facturas de compra
 app.post('/insertar-gasto', (req, res) => {
-    const { valor, fecha, descripcion } = req.body;
+    const { valor, fecha, descripcion, idObra } = req.body;
 
     // Consulta SQL para la inserción
-    const consulta = 'INSERT INTO `gastos` (`valor`) VALUES (?)';
+    const consulta = 'INSERT INTO `gastos` (`valor`, `idObra`) VALUES (?, ?)';
 
     console.log('Consulta SQL:', consulta);
 
     // Ejecuta la consulta con los datos proporcionados
-    db.query(consulta, [valor], (error, resultados) => {
+    db.query(consulta, [valor, idObra], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción del gasto:', error);
             res.json({ success: false });
@@ -435,15 +452,15 @@ app.post('/insertar-gasto', (req, res) => {
 
 // Ruta para la insercion de empleados
 app.post('/insertar-producto', (req, res) => {
-    const { nombre, precio, precioIva, existencias, idProveedor } = req.body;
+    const { nombre, precio, existencias, idProveedor } = req.body;
 
     // Consulta SQL para la inserción
-    const consulta = 'INSERT INTO `producto` (`nombre`, `precio`, `precioIva`, `existencias`, `estado`, `idProveedor`) VALUES (?, ?, ?, ?, ?, ?)';
+    const consulta = 'INSERT INTO `producto` (`nombre`, `precio`, `existencias`, `idProveedor`) VALUES (?, ?, ?, ?)';
 
     console.log('Consulta SQL:', consulta);
 
     // Ejecuta la consulta con los datos proporcionados
-    db.query(consulta, [nombre, precio, precioIva, existencias, "Activo", idProveedor], (error, resultados) => {
+    db.query(consulta, [nombre, precio, existencias, idProveedor], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción del producto:', error);
             res.json({ success: false });

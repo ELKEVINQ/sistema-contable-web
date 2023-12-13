@@ -12,11 +12,11 @@ export class AddClienteComponent {
 
   constructor(private fb: FormBuilder, private clienteService: ClienteService) {
     this.clienteForm = this.fb.group({
-      cedula: ['', [Validators.required, this.validarCedula.bind(this)]],
+      cedula: ['', [Validators.required]],
       nombres: ['', Validators.required],
-      apellidos: ['', Validators.required],
+      apellidos: [''],
       telefono: [''],
-      correo: ['', [Validators.email, this.validarCorreo.bind(this)]],
+      correo: ['',],
       direccion: [''],
     });
   }
@@ -25,17 +25,19 @@ export class AddClienteComponent {
     // Verificación de nulidad
     if (control === null) {
       return { 'nullControl': true };
+      console.log('nulo ');
     }
 
     const cedula = control.value;
 
     // Verificación de nulidad nuevamente después de obtener el valor
-    if (cedula === null || cedula === undefined || typeof cedula !== 'string' || cedula.length !== 10) {
+    if (cedula === null || cedula === undefined || typeof cedula !== 'string' || (cedula.length !== 10 && cedula.length !== 13)) {
       return { 'invalidCedulaLength': true };
+      console.log('mal campo ');
     }
 
-    // Obtiene los dígitos de la cédula
-    const digitos = cedula.split('').map(Number);
+    // Obtiene los dígitos de la cédula, ignorando los últimos 3 si el largo es de 13
+    const digitos = cedula.slice(0, cedula.length === 13 ? 10 : cedula.length).split('').map(Number);
 
     // Aplica el algoritmo de validación
     let par = 0;

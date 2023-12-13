@@ -16,7 +16,9 @@ export class ListaAnticiposComponent implements OnInit {
   apellidos: string = '';
   totalObraOriginal: number = 0;  // Nueva variable para almacenar el total original
   totalObraActual: number = 0;    // Nueva variable para mantener un seguimiento del total actual
+  gastoActual: number = 0;
   saldos: number[] = [];  // Nuevo arreglo para almacenar los saldos
+  gastos: string[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -59,6 +61,22 @@ export class ListaAnticiposComponent implements OnInit {
     const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
     return this.anticiposFiltrados.slice(inicio, fin);
+  }
+
+  calcularGasto(valorGasto: number, index: number): string {
+    // Si el saldo para esta fila ya ha sido calculado, devuelve el valor almacenado
+    if (this.gastos[index] !== undefined) {
+      return this.gastos[index];
+    }
+
+    // Calcula el saldo
+    this.gastoActual += valorGasto;
+
+    // Almacena el saldo calculado en el arreglo
+    this.gastos[index] = this.gastoActual.toFixed(2);
+
+    // Retorna el saldo actualizado
+    return this.gastos[index];
   }
 
   calcularSaldo(valorAnticipo: number, index: number): number {

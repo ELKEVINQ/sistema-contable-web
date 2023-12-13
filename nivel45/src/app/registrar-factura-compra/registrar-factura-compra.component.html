@@ -57,6 +57,14 @@
               (keypress)="validarEntrada($event)" />
           </div>
         </div>
+        <!--Check para abrir el modal-->
+        <div class="col-md-3 mb-2">
+          <div class="form-check" id="form-check">
+            <input class="form-check-input" type="checkbox" id="perteneceObra" formControlName="perteneceObra"
+              (change)="toogleObra()">
+            <label class="form-check-label" for="perteneceObra">Pertenece a una obra</label>
+          </div>
+        </div>
         <!--Boton de enviar-->
         <div class="row">
           <div class="text-end mt-3">
@@ -64,6 +72,38 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div class="card mt-3 obras-en-proceso" *ngIf="tieneObra">
+    <div class="card-body">
+      <h3>Obras en Proceso</h3>
+      <form *ngIf="obraForm" [formGroup]="obraForm">
+        <label for="cedula" class="form-label">Cedula:</label>
+        <input type="text" id="cedula" class="form-control" formControlName="cedula" (input)="abrirListaObras()">
+      </form>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Cédula</th>
+              <th>Número</th>
+              <th>Descripción</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let obra of obras" (click)="seleccionarObra(obra)">
+              <td>{{ obra.cedula }}</td>
+              <td>{{ obra.numero }}</td>
+              <td>{{ obra.descripcion }}</td>
+              <td>{{ obra.total | currency:'USD':'symbol':'1.2-2' }}</td>
+              <td>{{ obra.estado }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
