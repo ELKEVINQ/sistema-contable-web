@@ -3,6 +3,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ClienteService } from '../services/cliente/cliente.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-lista-clientes',
@@ -17,7 +18,7 @@ export class ListaClientesComponent implements OnInit {
   paginaActual = 1;
   itemsPorPagina = 10;
 
-  constructor(private fb: FormBuilder, private clienteService: ClienteService) {
+  constructor(private fb: FormBuilder, private clienteService: ClienteService, private router: Router) {
     this.filtroForm = this.fb.group({
       tipoBusqueda: ['cedula'],
       valorBusqueda: ['']
@@ -26,6 +27,19 @@ export class ListaClientesComponent implements OnInit {
 
   ngOnInit() {
     this.obtenerClientes();
+  }
+
+  irAEditar(cliente: any) {
+    this.router.navigate(['/p/editar-cliente'], {
+      queryParams: {
+        cedula: cliente.cedula,
+        nombres: cliente.nombres,
+        apellidos: cliente.apellidos,
+        telefono: cliente.telefono,
+        correo: cliente.correo,
+        direccion: cliente.direccion
+      }
+    });
   }
 
   obtenerClientes() {
@@ -50,20 +64,20 @@ export class ListaClientesComponent implements OnInit {
   aplicarFiltros() {
     const tipoBusqueda = this.filtroForm.get('tipoBusqueda')?.value;
     const valorBusqueda = this.filtroForm.get('valorBusqueda')?.value;
-  
+
     if (tipoBusqueda !== null && valorBusqueda !== null) {
       // Convertir ambos valores a minúsculas
       const valorBusquedaLower = valorBusqueda.toLowerCase();
-  
+
       // Filtra los clientes
       this.clientesFiltrados = this.clientes.filter(cliente =>
         cliente[tipoBusqueda].toLowerCase().includes(valorBusquedaLower)
       );
-  
+
       // Reinicia la paginación
       this.paginaActual = 1;
     }
-  }  
+  }
 
   onPageChange(event: number) {
     this.paginaActual = event;

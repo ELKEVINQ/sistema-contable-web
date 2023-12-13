@@ -32,6 +32,7 @@ import { AddClienteComponent } from './add-cliente/add-cliente.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { WebcamModule } from 'ngx-webcam';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { EditarClienteComponent } from './editar-cliente/editar-cliente.component';
 
 
 @NgModule({
@@ -62,6 +63,7 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
     ListaEmpleadosComponent,
     LoginComponent,
     AddClienteComponent,
+    EditarClienteComponent,
   ],
   imports: [
     BrowserModule,

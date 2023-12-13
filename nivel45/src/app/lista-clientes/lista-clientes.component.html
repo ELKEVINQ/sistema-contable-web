@@ -28,6 +28,7 @@
       <th scope="col">Teléfono</th>
       <th scope="col">Dirección</th>
       <th scope="col">Correo</th>
+      <th scope="col">Acciones</th>
       <!-- Agrega aquí más columnas según tus necesidades -->
     </tr>
   </thead>
@@ -39,6 +40,11 @@
       <td>{{ cliente.telefono }}</td>
       <td>{{ cliente.direccion }}</td>
       <td>{{ cliente.correo }}</td>
+      <td>
+        <span class="actions1" (click)="irAEditar(cliente)">
+          <i class="fa fa-plus"></i>Editar
+        </span>
+      </td>
     </tr>
   </tbody>
 </table>

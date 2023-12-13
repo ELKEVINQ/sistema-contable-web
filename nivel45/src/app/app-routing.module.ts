@@ -24,6 +24,7 @@ import { AddProductoComponent } from './add-producto/add-producto.component';
 import { ListaProductosComponent } from './lista-productos/lista-productos.component';
 import { ListaEmpleadosComponent } from './lista-empleados/lista-empleados.component';
 import { AddClienteComponent } from './add-cliente/add-cliente.component';
+import { EditarClienteComponent } from './editar-cliente/editar-cliente.component';
 
 const routes: Routes = [
   { path: 'inicio', component: InicioComponent },
@@ -41,6 +42,7 @@ const routes: Routes = [
       { path: 'add-producto', component: AddProductoComponent },
       { path: 'add-proveedor', component: AddProveedorComponent },
       { path: 'add-empleado', component: AddEmpleadoComponent },
+      { path: 'editar-cliente', component: EditarClienteComponent },
       { path: 'facturar', component: FacturarComponent },
       { path: 'lista-anticipos', component: ListaAnticiposComponent },
       { path: 'lista-empleados', component: ListaEmpleadosComponent },

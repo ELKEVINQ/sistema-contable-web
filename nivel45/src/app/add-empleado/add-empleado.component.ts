@@ -38,14 +38,11 @@ export class AddEmpleadoComponent {
   onInputChange() {
     if(this.empleadoForm.get('cedula')?.value.length === 10){
       this.cedula = this.empleadoForm.get('cedula')?.value;
-      this.clienteService.obtenerCliente(this.cedula).subscribe((clientes) => {
+      this.clienteService.obtenerCliente(this.cedula).subscribe((data: any) => {
         // Filtrar el cliente por la cédula
-        const clienteEncontrado = clientes.find(cliente => cliente.cedula === this.cedula);
+        const cliente = data;
 
-        if (clienteEncontrado) {
-          // Si se encuentra el cliente, asignar el valor al campo número en el formulario
-          this.empleadoForm.get('nombres')?.setValue(clienteEncontrado.nombres + " " + clienteEncontrado.apellidos);
-        }
+        this.empleadoForm.get('nombres')?.setValue(cliente.nombres + " " + cliente.apellidos);
       });
     }else {
       this.empleadoForm.get('nombres')?.setValue('');

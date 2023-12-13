@@ -1,0 +1,51 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">
+      <h5>Editar Cliente</h5>
+    </div>
+    <div class="card-body">
+      <form *ngIf="formCliente" [formGroup]="formCliente" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!--Cedula ya obtenida-->
+          <div class="col-md-3 mb-2">
+            <label for="cedula" class="form-label">Cedula:</label>
+            <p>{{cedula}}</p>
+          </div>
+          <!--Nombres -->
+          <div class="col-md-4 mb-2">
+            <label for="nombres" class="form-label">Nombres:</label>
+            <input type="text" id="nombres" class="form-control" formControlName="nombres" [class.is-invalid]="formCliente.get('nombres')?.invalid && formCliente.get('nombres')?.touched">
+          </div>
+          <!--Apellidos -->
+          <div class="col-md-4 mb-2">
+            <label for="apellidos" class="form-label">Apellidos:</label>
+            <input type="text" id="apellidos" class="form-control" formControlName="apellidos">
+          </div>
+        </div>
+        <div class="row">
+          <!--Direccion -->
+          <div class="col-md-4 mb-2">
+            <label for="direccion" class="form-label">Dirección:</label>
+            <input type="text" id="direccion" class="form-control" formControlName="direccion">
+          </div>
+          <!--Telefono -->
+          <div class="col-md-4 mb-2">
+            <label for="telefono" class="form-label">Teléfono:</label>
+            <input type="text" id="telefono" class="form-control" formControlName="telefono">
+          </div>
+        </div>
+        <div class="row">
+          <!--Correo -->
+          <div class="col-md-4 mb-2">
+            <label for="correo" class="form-label">e-Mail:</label>
+            <input type="text" id="correo" class="form-control" formControlName="correo">
+          </div>
+          <!--Guardar -->
+          <div class="text-end mt-3">
+            <button type="submit" class="btn btn-primary">Guardar </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

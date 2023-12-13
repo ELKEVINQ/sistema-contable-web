@@ -15,19 +15,19 @@
       <th scope="col">Nombre y Apellido</th>
       <th scope="col">Valor del Anticipo</th>
       <th scope="col">Valor del Gasto</th>
-      <th scope="col">Total del Gasto</th>
+      <th scope="col">Gasto Actual</th>
       <th scope="col">Saldo</th>
       <!-- Agrega aquí más columnas según tus necesidades -->
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let anticipo of anticiposPaginados; let i = index">
+    <tr *ngFor="let anticipos of anticiposPaginados; let i = index">
       <td>{{ i + 1 }}</td>
       <td>{{ nombres }} {{ apellidos }}</td>
-      <td>{{ anticipo.valor }}</td>
-      <td>{{ anticipo.gasto }}</td>
-      <td>{{ calcularGasto(anticipo.gasto, i) }}</td>
-      <td>{{ calcularSaldo(anticipo.valor, i) }}</td>
+      <td>{{ regular(anticipos.valor) }}</td>
+      <td>{{ regular(anticipos.gasto) }}</td>
+      <td>{{ calcularGasto(anticipos.gasto, i) }}</td>
+      <td>{{ calcularSaldo(anticipos.valor, i) }}</td>
     </tr>
   </tbody>
 </table>

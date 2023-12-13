@@ -17,7 +17,7 @@ export class ListaAnticiposComponent implements OnInit {
   totalObraOriginal: number = 0;  // Nueva variable para almacenar el total original
   totalObraActual: number = 0;    // Nueva variable para mantener un seguimiento del total actual
   gastoActual: number = 0;
-  saldos: number[] = [];  // Nuevo arreglo para almacenar los saldos
+  saldos: string[] = [];  // Nuevo arreglo para almacenar los saldos
   gastos: string[] = [];
 
   constructor(
@@ -64,34 +64,54 @@ export class ListaAnticiposComponent implements OnInit {
   }
 
   calcularGasto(valorGasto: number, index: number): string {
-    // Si el saldo para esta fila ya ha sido calculado, devuelve el valor almacenado
-    if (this.gastos[index] !== undefined) {
+    if (valorGasto === null) {
+      return "0.00";
+    } else {
+
+      // Si el saldo para esta fila ya ha sido calculado, devuelve el valor almacenado
+      if (this.gastos[index] !== undefined) {
+        return this.gastos[index];
+      }
+
+      // Calcula el saldo
+      this.gastoActual += valorGasto;
+
+      // Almacena el saldo calculado en el arreglo
+      this.gastos[index] = this.gastoActual.toFixed(2);
+
+      // Retorna el saldo actualizado
       return this.gastos[index];
     }
-
-    // Calcula el saldo
-    this.gastoActual += valorGasto;
-
-    // Almacena el saldo calculado en el arreglo
-    this.gastos[index] = this.gastoActual.toFixed(2);
-
-    // Retorna el saldo actualizado
-    return this.gastos[index];
   }
 
-  calcularSaldo(valorAnticipo: number, index: number): number {
-    // Si el saldo para esta fila ya ha sido calculado, devuelve el valor almacenado
-    if (this.saldos[index] !== undefined) {
+  calcularSaldo(valorAnticipo: number, index: number): string {
+    if (valorAnticipo === null) {
+      return "0.00";
+    } else {
+      // Si el saldo para esta fila ya ha sido calculado, devuelve el valor almacenado
+      if (this.saldos[index] !== undefined) {
+        return this.saldos[index];
+      }
+
+      // Calcula el saldo
+      this.totalObraActual -= valorAnticipo;
+
+      // Almacena el saldo calculado en el arreglo
+      this.saldos[index] = this.totalObraActual.toFixed(2);
+
+      // Retorna el saldo actualizado
       return this.saldos[index];
     }
+  }
 
-    // Calcula el saldo
-    this.totalObraActual -= valorAnticipo;
-
-    // Almacena el saldo calculado en el arreglo
-    this.saldos[index] = this.totalObraActual;
-
-    // Retorna el saldo actualizado
-    return this.saldos[index];
+  regular(valor: any): string {
+    if (valor === null) {
+      return "0.00"
+    } else {
+      if (valor % 2 !== 0) {
+        return valor;
+      }
+      return valor+".00";
+    }
   }
 }

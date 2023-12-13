@@ -26,8 +26,8 @@ export class ClienteService {
     return this.http.get<any[]>(url);
   }
 
-  obtenerCliente(cedula: string): Observable<any[]> {
+  obtenerCliente(cedula: string): Observable<any> {
     const url = `${this.apiUrl}/obtener-cliente/${cedula}`;
-    return this.http.get<any[]>(url);
+    return this.http.get<any>(url);
   }
 }

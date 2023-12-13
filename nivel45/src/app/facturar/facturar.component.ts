@@ -316,14 +316,11 @@ export class FacturarComponent {
   onInputChange() {
     if (this.facturaForm.get('cedula')?.value.length === 10) {
       this.cedula = this.facturaForm.get('cedula')?.value;
-      this.clienteService.obtenerCliente(this.cedula).subscribe((clientes) => {
+      this.clienteService.obtenerCliente(this.cedula).subscribe((data: any) => {
         // Filtrar el cliente por la cédula
-        const clienteEncontrado = clientes.find(cliente => cliente.cedula === this.cedula);
-        if (clienteEncontrado) {
-          // Si se encuentra el cliente, asignar el valor al campo número en el formulario
-          this.facturaForm.get('nombres')?.setValue(clienteEncontrado.nombres + " " + clienteEncontrado.apellidos);
+        const cliente = data;
+        this.facturaForm.get('nombres')?.setValue(cliente.nombres + " " + cliente.apellidos);
           this.abrirListaObras();
-        }
       });
     } else {
       this.facturaForm.get('nombres')?.setValue('');

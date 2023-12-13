@@ -147,7 +147,7 @@ app.post('/insertar-anticipo', (req, res) => {
 });
 
 // Ruta para la búsqueda de anticipos según la obra
-app.get('/obtener-anticipos-y-gastos/:idObra', (req, res) => {
+app.get('/obtener-anticipos/:idObra', (req, res) => {
     const idObra = req.params.idObra;
 
     const consulta = `

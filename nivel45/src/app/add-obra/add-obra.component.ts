@@ -37,14 +37,11 @@ export class AddObraComponent implements OnInit {
 
   buscarCliente(cedula: string) {
     // Realizar la solicitud al servicio de obras para obtener la lista de clientes
-    this.clienteService.obtenerCliente(cedula).subscribe((clientes) => {
+    this.clienteService.obtenerCliente(cedula).subscribe((data: any) => {
       // Filtrar el cliente por la cédula
-      const clienteEncontrado = clientes.find(cliente => cliente.cedula === cedula);
+      const cliente = data;
 
-      if (clienteEncontrado) {
-        // Si se encuentra el cliente, asignar el valor al campo número en el formulario
-        this.obraForm.get('numero')?.setValue(clienteEncontrado.numero + 1);
-      }
+      this.obraForm.get('numero')?.setValue(cliente.numero + 1);
     });
   }
 
