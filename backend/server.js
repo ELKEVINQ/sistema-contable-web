@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const cors = require('cors'); // Importa el paquete CORS
+const { error } = require('console');
 
 const app = express();
 
@@ -68,6 +69,23 @@ app.post('/insertar-cliente', (req, res) => {
             res.json({ success: false });
         } else {
             console.log('Cliente insertado correctamente');
+            res.json({ success: true });
+        }
+    });
+});
+
+app.post('/editar-cliente', (req, res) => {
+    const { cedula, nombres, apellidos, telefono, correo, direccion } = req.body;
+
+    const consulta = 'UPDATE `persona` SET `nombres`=? ,`apellidos`=? ,`telefono`=? ,`correo`=? ,`direccion`=? WHERE cedula = ?';
+
+    db.query(consulta, [nombres, apellidos, telefono, correo, direccion, cedula ], (error, resultados) => {
+        if(error){
+            console.log(consulta)
+            console.error('Error en la modificacion del cliente: ', error);
+            res.json({success: false});
+        }else{
+            console.log('Cliente modificado correctamente');
             res.json({ success: true });
         }
     });
@@ -179,8 +197,6 @@ app.get('/obtener-anticipos/:idObra', (req, res) => {
         }
     });
 });
-
-
 
 
 // Ruta para la inserción de roles

@@ -30,4 +30,15 @@ export class ClienteService {
     const url = `${this.apiUrl}/obtener-cliente/${cedula}`;
     return this.http.get<any>(url);
   }
+
+  editarCliente(clienteData: any): Observable<any> {
+    const url = `${this.apiUrl}/editar-cliente`;
+    return this.http.post<any>(url, clienteData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
 }

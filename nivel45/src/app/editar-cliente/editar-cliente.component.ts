@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClienteService } from '../services/cliente/cliente.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -21,11 +21,11 @@ export class EditarClienteComponent {
   correo: string = "";
   direccion: string = "";
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private clienteService: ClienteService) {
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private clienteService: ClienteService, private router: Router) {
     this.cedula = route.snapshot.queryParams['cedula'];
     this.obtenerCliente(this.cedula);
     this.formCliente = fb.group({
-      cedula: [''],
+      cedula: [this.cedula],
       nombres: [''],
       apellidos: [''],
       telefono: [''],
@@ -50,7 +50,27 @@ export class EditarClienteComponent {
     this.formCliente.get('correo')?.setValue(this.cliente[0].correo);
   }
 
-  onSubmit() {
+  volver() {
+    this.router.navigate(['/p/lista-clientes'], {
+    });
+  }
 
+  onSubmit() {
+    if(this.formCliente.valid){
+      const { cedula, nombres, apellidos, telefono, correo, direccion } = this.formCliente.value;
+
+      // Llama al servicio para insertar el cliente
+      this.clienteService.editarCliente( {cedula, nombres, apellidos, telefono, correo, direccion} ).subscribe((response: { success: any; }) => {
+        if (response.success) {
+          alert('Cliente modificado correctamente');
+          // Puedes hacer más cosas aquí, como redirigir a otra página
+        } else {
+          alert('Error al modificar el cliente');
+          // Manejo de errores
+        }
+      });
+    } else {
+      alert('Formulario inválido. Revise los campos.');
+    }
   }
 }

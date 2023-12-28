@@ -40,4 +40,8 @@ export class ObraService {
     const url = `${this.apiUrl}/obtener-obras-cedula/${cedula}`;
     return this.http.get<any[]>(url);
   }
+
+  modificarObra(){
+    
+  }
 }
