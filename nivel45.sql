@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-10-2023 a las 21:20:51
--- Versión del servidor: 10.4.27-MariaDB
--- Versión de PHP: 8.0.25
+-- Tiempo de generación: 08-01-2024 a las 14:37:08
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -55,12 +55,23 @@ INSERT INTO `anticipo` (`idAnticipo`, `idObra`, `valor`) VALUES
 
 CREATE TABLE `detallefactura` (
   `idDetalle` int(11) NOT NULL,
+  `idFactura` varchar(20) NOT NULL,
   `numero` int(11) NOT NULL,
   `cantidad` int(11) NOT NULL,
   `descripcion` varchar(200) NOT NULL,
-  `idProducto` int(11) DEFAULT NULL,
   `precioTotal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `detallefactura`
+--
+
+INSERT INTO `detallefactura` (`idDetalle`, `idFactura`, `numero`, `cantidad`, `descripcion`, `precioTotal`) VALUES
+(1, '0', 1, 2, 'Tortillas', 2),
+(2, '0', 2, 1, 'Tubo cuadrado', 15),
+(3, '0', 1, 2, 'Papas', 1),
+(4, '0000-0000-0003', 1, 3, 'Cebollas', 1),
+(5, '0000-0000-0004', 1, 2, 'Tortillas', 2);
 
 -- --------------------------------------------------------
 
@@ -94,15 +105,25 @@ INSERT INTO `empleado` (`idEmpleado`, `cedula`, `fecha_entrada`, `fecha_salida`,
 
 CREATE TABLE `factura` (
   `idFactura` varchar(20) NOT NULL,
+  `cedula` varchar(13) NOT NULL,
   `fecha` date NOT NULL,
   `subtotal` float NOT NULL,
   `iva` float NOT NULL,
   `descuento` float DEFAULT NULL,
   `total` float NOT NULL,
-  `idUsuario` int(11) NOT NULL,
   `estado` varchar(20) NOT NULL,
   `idObra` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `factura`
+--
+
+INSERT INTO `factura` (`idFactura`, `cedula`, `fecha`, `subtotal`, `iva`, `descuento`, `total`, `estado`, `idObra`) VALUES
+('0000-0000-0001', '0105108930', '2023-12-04', 14.77, 2.01, 0, 16.78, 'Valida', 0),
+('0000-0000-0002', '0105108930', '2023-12-04', 0.7, 0.1, 0, 0.8, 'Valida', 0),
+('0000-0000-0003', '0105108930', '2023-12-04', 0.66, 0.09, 0, 0.75, 'Valida', 0),
+('0000-0000-0004', '0105108930', '2023-12-06', 1.57, 0.21, 0, 1.78, 'Valida', 1);
 
 -- --------------------------------------------------------
 
@@ -117,6 +138,14 @@ CREATE TABLE `facturacompra` (
   `valor` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `facturacompra`
+--
+
+INSERT INTO `facturacompra` (`idFacturaCompra`, `idProveedor`, `fecha`, `valor`) VALUES
+('', 1, '2023-10-17', 30),
+('111111', 1, '2023-10-17', 50);
+
 -- --------------------------------------------------------
 
 --
@@ -126,8 +155,18 @@ CREATE TABLE `facturacompra` (
 CREATE TABLE `gastos` (
   `idGasto` int(11) NOT NULL,
   `valor` float NOT NULL,
-  `idProducto` int(11) DEFAULT NULL
+  `idFacturaCompra` int(11) DEFAULT NULL,
+  `idObra` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `gastos`
+--
+
+INSERT INTO `gastos` (`idGasto`, `valor`, `idFacturaCompra`, `idObra`) VALUES
+(1, 30, 0, NULL),
+(2, 50, 111111, NULL),
+(3, 50, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -161,7 +200,7 @@ INSERT INTO `obras` (`idObra`, `cedula`, `numero`, `descripcion`, `total`, `fech
 CREATE TABLE `persona` (
   `cedula` varchar(13) NOT NULL,
   `nombres` varchar(100) NOT NULL,
-  `apellidos` varchar(100) NOT NULL,
+  `apellidos` varchar(100) DEFAULT NULL,
   `telefono` varchar(10) DEFAULT NULL,
   `correo` varchar(50) DEFAULT NULL,
   `direccion` varchar(200) DEFAULT NULL
@@ -172,7 +211,7 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`cedula`, `nombres`, `apellidos`, `telefono`, `correo`, `direccion`) VALUES
-('0105108922', 'Karen Viviana', 'Zambrano Valverde', '0985116173', 'kaviana72@hotmail.com', 'Mariscal lamar 21-80'),
+('0105108922', 'Karen Viviana', 'Zambrano Valverde', '0988291252', 'kaviana72@hotmail.com', 'Mariscal lamar 21-80'),
 ('0105108930', 'Kevin Javier', 'Zambrano Valverde', '0963394920', 'kevinvz110@gmail.com', 'Mariscal Lamar 21-80');
 
 -- --------------------------------------------------------
@@ -185,10 +224,19 @@ CREATE TABLE `producto` (
   `idProducto` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `precio` float NOT NULL,
+  `precioIva` int(11) NOT NULL,
   `existencias` int(11) NOT NULL,
-  `idProveedor` int(11) NOT NULL,
-  `idFacturaCompra` int(11) NOT NULL
+  `estado` varchar(10) NOT NULL,
+  `idProveedor` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `producto`
+--
+
+INSERT INTO `producto` (`idProducto`, `nombre`, `precio`, `precioIva`, `existencias`, `estado`, `idProveedor`) VALUES
+(1, 'Tubo cuadrado', 15, 17, 0, 'Activo', 1),
+(2, 'Tortillas', 0.89, 1, 25, 'Activo', 1);
 
 -- --------------------------------------------------------
 
@@ -222,10 +270,10 @@ CREATE TABLE `registro` (
   `fecha` date NOT NULL,
   `descripcion` varchar(200) NOT NULL,
   `saldo` float NOT NULL,
-  `idSaldo` int(11) NOT NULL,
-  `idAnticipo` int(11) NOT NULL,
-  `idGasto` int(11) NOT NULL,
-  `idRol` int(11) NOT NULL
+  `idSaldo` int(11) DEFAULT NULL,
+  `idAnticipo` int(11) DEFAULT NULL,
+  `idGasto` int(11) DEFAULT NULL,
+  `idRol` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -240,7 +288,11 @@ INSERT INTO `registro` (`idRegistro`, `fecha`, `descripcion`, `saldo`, `idSaldo`
 (5, '0000-00-00', 'quinto anticipo', 1700, 0, 6, 0, 0),
 (6, '0000-00-00', 'no tengo idea', 1800, 0, 10, 0, 0),
 (7, '0000-00-00', 'no tengo idea', 1900, 0, 11, 0, 0),
-(8, '2023-10-12', 'c', 1901, 0, 12, 0, 0);
+(8, '2023-10-12', 'c', 1901, 0, 12, 0, 0),
+(9, '2023-10-16', 'Primer pago de sueldo', 1861, 0, 0, 0, 1),
+(10, '2023-10-17', 'Gasto', 1831, 0, 0, 1, 0),
+(11, '2023-10-17', 'Primera Compra megacero', 1781, 0, 0, 2, 0),
+(12, '2023-10-17', 'Primer gasto libre', 1731, 0, 0, 3, 0);
 
 -- --------------------------------------------------------
 
@@ -254,6 +306,13 @@ CREATE TABLE `roldepago` (
   `valor` float NOT NULL,
   `observaciones` varchar(500) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `roldepago`
+--
+
+INSERT INTO `roldepago` (`idRol`, `idEmpleado`, `valor`, `observaciones`) VALUES
+(1, 4, 40, 'Pago por fin de semana techo de rafita');
 
 -- --------------------------------------------------------
 
@@ -392,7 +451,7 @@ ALTER TABLE `anticipo`
 -- AUTO_INCREMENT de la tabla `detallefactura`
 --
 ALTER TABLE `detallefactura`
-  MODIFY `idDetalle` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idDetalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `empleado`
@@ -404,7 +463,7 @@ ALTER TABLE `empleado`
 -- AUTO_INCREMENT de la tabla `gastos`
 --
 ALTER TABLE `gastos`
-  MODIFY `idGasto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idGasto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `obras`
@@ -416,7 +475,7 @@ ALTER TABLE `obras`
 -- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
-  MODIFY `idProducto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idProducto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedor`
@@ -428,13 +487,13 @@ ALTER TABLE `proveedor`
 -- AUTO_INCREMENT de la tabla `registro`
 --
 ALTER TABLE `registro`
-  MODIFY `idRegistro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idRegistro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `roldepago`
 --
 ALTER TABLE `roldepago`
-  MODIFY `idRol` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idRol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `saldo`
