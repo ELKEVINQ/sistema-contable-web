@@ -50,7 +50,16 @@ export class ListaObrasComponent {
   }
 
   actualizarEstado(obras: any) {
-    console.log(`Nuevo estado para la obra ${obras.idObra}: ${obras.estado}`);
+    const idObra = obras.idObra;
+    const estado = obras.estado;
+
+    this.obraService.modificarObra( {idObra, estado}).subscribe((response: {success: any;}) =>{
+      if (response.success){
+        alert('Estado modificado correctamente')
+      }else{
+        alert('Fallo al modificar el estado')
+      }
+    });
   }
 
   seleccionarColumna() {
@@ -64,20 +73,20 @@ export class ListaObrasComponent {
   aplicarFiltros() {
     const tipoBusqueda = this.filtroForm.get('tipoBusqueda')?.value;
     const valorBusqueda = this.filtroForm.get('valorBusqueda')?.value;
-  
+
     if (tipoBusqueda !== null && valorBusqueda !== null) {
       // Convertir ambos valores a minúsculas
       const valorBusquedaLower = valorBusqueda.toLowerCase();
-  
+
       // Filtra las obras
       this.obrasFiltradas = this.obras.filter(obras =>
         obras[tipoBusqueda].toLowerCase().includes(valorBusquedaLower)
       );
-  
+
       // Reinicia la paginación
       this.paginaActual = 1;
     }
-  }  
+  }
 
   onPageChange(event: number) {
     this.paginaActual = event;

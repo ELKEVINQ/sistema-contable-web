@@ -41,7 +41,14 @@ export class ObraService {
     return this.http.get<any[]>(url);
   }
 
-  modificarObra(){
-    
+  modificarObra(obraData: any): Observable<any>{
+    const url = `${this.apiUrl}/modificar-estado-obra`;
+    return this.http.post<any>(url, obraData)
+    .pipe(
+      catchError((error) => {
+        console.error('Error en la solicitud HTTP:', error);
+        throw error; // Propaga el error para que otros puedan manejarlo
+      })
+    );
   }
 }
