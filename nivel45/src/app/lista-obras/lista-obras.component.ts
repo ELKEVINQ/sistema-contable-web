@@ -15,6 +15,7 @@ export class ListaObrasComponent {
   columnaBusqueda: string | null = 'cedula';  // Inicializado en 'cedula' por defecto
   paginaActual = 1;
   itemsPorPagina = 10;
+  estadoTemporal: string = "";
 
   constructor(private fb: FormBuilder, private obraService: ObraService, private router: Router) {
     this.filtroForm = this.fb.group({
@@ -49,16 +50,31 @@ export class ListaObrasComponent {
     });
   }
 
+  onEstadoChange(event: any) {
+    this.estadoTemporal = event.target.value;
+  }
+
   actualizarEstado(obras: any) {
     const idObra = obras.idObra;
-    const estado = obras.estado;
+    const estado = this.estadoTemporal;
 
-    this.obraService.modificarObra( {idObra, estado}).subscribe((response: {success: any;}) =>{
+    if(this.estadoTemporal === ""){
+      alert("No se modifico el estado previamente")
+      return;
+    }else{
+      console.log("idObra :"+idObra)
+      console.log("estado :"+estado)
+    }
+
+    this.obraService.modificarObra( { idObra, estado } ).subscribe((response: { success: any; }) => {
       if (response.success){
         alert('Estado modificado correctamente')
+        console.log("Bien?")
       }else{
         alert('Fallo al modificar el estado')
+        console.log("Mal?")
       }
+      this.estadoTemporal = "";
     });
   }
 

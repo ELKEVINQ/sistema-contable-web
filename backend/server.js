@@ -309,17 +309,18 @@ app.get('/obtener-obras-cedula/:cedula', (req, res) => {
     });
 });
 
-app.post('modificar-estado-obra', (req, res) =>{
+app.post('/modificar-estado-obra', (req, res) =>{
     const {idObra, estado} = req.body;
 
-    const consulta = 'UPDATE `obras` SET `estado` = ? where `idObra` = ?';
+    const consulta = 'UPDATE `obras` SET `estado` = ? WHERE `idObra` = ?';
     
     db.query(consulta, [estado, idObra], (error, resultados) => {
         if (error){
             console.error('Error al modificar la obra: ', error);
             res.status(500).json({success: false, error: 'Error interno del servidor al modificar'});
         } else {
-            res.json(resultados);
+            console.log("Estado modificado correctamente" + estado + idObra);
+            res.json({ success: true });
         }
     })
 });
