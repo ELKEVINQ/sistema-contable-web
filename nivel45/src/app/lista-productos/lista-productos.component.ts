@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProductoService } from '../services/producto/producto.service';
 import { Router } from '@angular/router';
 import * as pdfMake from 'pdfmake/build/pdfMake'; // Importa pdfMake
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'; // Importa pdfFonts
+import {  EncodeHintType, BarcodeFormat, BrowserQRCodeSvgWriter, QRCodeWriter } from '@zxing/library';
 
 @Component({
   selector: 'app-lista-productos',
@@ -22,6 +23,8 @@ export class ListaProductosComponent {
   modalSwitch = false;
   qrImageUrl: string | null = '';
 
+  @ViewChild('qrCodeCanvas') qrCodeCanvas: ElementRef | undefined;
+
   constructor(private fb: FormBuilder, private productoService: ProductoService, private router: Router) {
     this.filtroForm = this.fb.group({
       tipoBusqueda: ['nombre'],
@@ -34,8 +37,36 @@ export class ListaProductosComponent {
     this.producto = producto;
 
     // Genera la URL del QR y guárdala en una propiedad
-    this.qrImageUrl = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${producto.idProducto}`;
-    this.loadImageAsDataUrl(this.qrImageUrl);
+    this.generateQRCode(producto.idProducto);
+  }
+
+  generateQRCode(content: string) {
+    const qrCodeWriter = new QRCodeWriter();
+    const hints: Map<EncodeHintType, any> = null as any; // Asegura que hints sea de tipo Map
+    const bitMatrix = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, 350, 350, hints);
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    if (context) {
+      const imageData = context.createImageData(bitMatrix.getWidth(), bitMatrix.getHeight());
+
+      for (let y = 0; y < bitMatrix.getHeight(); y++) {
+        for (let x = 0; x < bitMatrix.getWidth(); x++) {
+          const index = (y * bitMatrix.getWidth() + x) * 4;
+          imageData.data[index + 0] = bitMatrix.get(x, y) ? 0 : 255; // R
+          imageData.data[index + 1] = bitMatrix.get(x, y) ? 0 : 255; // G
+          imageData.data[index + 2] = bitMatrix.get(x, y) ? 0 : 255; // B
+          imageData.data[index + 3] = 255; // A
+        }
+      }
+
+      canvas.width = bitMatrix.getWidth();
+      canvas.height = bitMatrix.getHeight();
+      context.putImageData(imageData, 0, 0);
+
+      // Convierte el canvas a un Data URL
+      this.qrImageUrl = canvas.toDataURL('image/png');
+    }
   }
 
   cerrarModal() {
@@ -66,39 +97,39 @@ export class ListaProductosComponent {
       console.error('URL del código QR no disponible');
       return;
     }
-  
+
     // Define documentDefinition como un objeto de tipo any
     const documentDefinition: any = {
       pageSize: 'A4',
       content: [],
     };
-  
+
     const cantidadPorFila = 7; // Ajusta la cantidad de códigos QR por fila según tus necesidades
     const filas: any[][] = [];
-  
+
     for (let i = 0; i < cantidadQR; i++) {
       const celda = {
         image: this.qrImageUrl,
         width: 64,
         margin: [0, 0], // Ajusta el margen entre los códigos QR
       };
-  
+
       // Crea una nueva fila si es necesario
       if (i % cantidadPorFila === 0) {
         filas.push([]);
       }
-  
+
       // Agrega la celda a la última fila
       filas[filas.length - 1].push(celda);
     }
-  
+
     // Asegura que cada fila tenga la misma cantidad de celdas
     for (const fila of filas) {
       while (fila.length < cantidadPorFila) {
         fila.push({ text: '', margin: [0, 0] });
       }
     }
-  
+
     // Agrega las filas a una tabla
     const table = {
       table: {
@@ -106,15 +137,55 @@ export class ListaProductosComponent {
         body: filas,
       },
     };
-  
+
     documentDefinition.content.push(table);
-  
+
     // Genera el PDF después de agregar todas las imágenes
     pdfMake.createPdf(documentDefinition).download('qr_codes.pdf');
   }
 
   addExistencias(productos: any) {
-    this.router.navigate(['/p/añadir-existencias'], { queryParams: { idProducto: productos.idProducto, existencias: productos.existencias } });
+    const cantidad = prompt('Ingresa la cantidad a añadir:');
+    const idProducto = productos.idProducto
+
+    if (cantidad!== null) {
+      const regex = /^\d+(\.\d+)?$/;
+      if (regex.test(cantidad)) {
+        this.productoService.addExistencias( { idProducto, cantidad } ).subscribe((response: { success: any; }) => {
+          if (response.success){
+            alert('Existencias modificadas correctamente')
+          }else{
+            alert('Fallo al modificar las existencias')
+          }
+        });
+      }else{
+        alert("No ingresaste un valor valido");
+      }
+    }else{
+      alert("No ingresaste ningun valor")
+    }
+  }
+
+  modificarPrecio(productos: any) {
+    const precio = prompt('Ingresa el nuevo precio:');
+    const idProducto = productos.idProducto
+
+    if (precio!== null) {
+      const regex = /^\d+(\.\d+)?$/;
+      if (regex.test(precio)) {
+        this.productoService.modificarPrecio( { idProducto, precio } ).subscribe((response: { success: any; }) => {
+          if (response.success){
+            alert('Precio modificado correctamente ' + precio)
+          }else{
+            alert('Fallo al modificar el precio')
+          }
+        });
+      }else{
+        alert("No ingresaste un valor valido");
+      }
+    }else{
+      alert("No ingresaste ningun valor")
+    }
   }
 
   guardarEstado(productos: any) {
@@ -138,6 +209,11 @@ export class ListaProductosComponent {
 
   onInputChange() {
     this.aplicarFiltros();
+  }
+
+  calcularPrecioIva(precio: any){
+    const precioIva = parseFloat((precio * 1.12).toFixed(2));
+    return precioIva;
   }
 
   aplicarFiltros() {

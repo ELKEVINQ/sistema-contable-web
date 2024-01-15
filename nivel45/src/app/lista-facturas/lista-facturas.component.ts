@@ -60,6 +60,14 @@ export class ListaFacturasComponent implements OnInit {
     this.obtenerFacturas();
   }
 
+  formatearFecha(str: string) {
+    if (str.length > 10) {
+      return str.substring(0, 10);
+    } else {
+      return str;
+    }
+  }
+
   obtenerFacturas() {
     this.facturaService.obtenerFacturas().subscribe((data: any[]) => {
       this.facturas = data;

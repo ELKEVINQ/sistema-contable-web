@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProveedorService } from '../services/proveedor/proveedor.service';
 
 @Component({
@@ -17,7 +17,7 @@ export class ListaProveedoresComponent {
   celular: string = '';
   direccion: string = '';
 
-  constructor(private route: ActivatedRoute, private proveedorService: ProveedorService ) { }
+  constructor(private route: ActivatedRoute, private proveedorService: ProveedorService, private router: Router) { }
 
   ngOnInit(): void {
     this.obtenerProveedores();
@@ -51,5 +51,17 @@ export class ListaProveedoresComponent {
     const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
     return this.proveedoresFiltrados.slice(inicio, fin);
+  }
+
+  editarProveedor(proveedor: any){
+    this.router.navigate(['/p/editar-proveedor'], {
+      queryParams: {
+        idProveedor: proveedor.idProveedor,
+        nombre: proveedor.nombre,
+        telefono: proveedor.telefono,
+        celular: proveedor.celular,
+        direccion: proveedor.direccion
+      }
+    });
   }
 }

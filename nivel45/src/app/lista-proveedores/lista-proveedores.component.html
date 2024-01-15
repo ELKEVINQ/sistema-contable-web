@@ -13,6 +13,7 @@
       <th scope="col">Teléfono</th>
       <th scope="col">Celular</th>
       <th scope="col">Direccion</th>
+      <th scope="col">Acciones</th>
       <!-- Agrega aquí más columnas según tus necesidades -->
     </tr>
   </thead>
@@ -23,6 +24,11 @@
       <td>{{ proveedores.telefono }}</td>
       <td>{{ proveedores.celular }}</td>
       <td>{{ proveedores.direccion }}</td>
+      <td>
+        <span class="actions1" (click)="editarProveedor(proveedores)">
+          <i class="fa fa-plus"></i>Editar Proveedor
+        </span>
+      </td>
     </tr>
   </tbody>
 </table>

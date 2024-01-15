@@ -304,6 +304,7 @@ app.get('/obtener-obras-cedula/:cedula', (req, res) => {
             console.error('Error al obtener las obras:', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
         } else {
+            console.log(resultados)
             res.json(resultados);
         }
     });
@@ -396,6 +397,38 @@ app.get('/obtener-proveedor/:nombre', (req, res) => {
             res.json(resultados);
         }
     });
+});
+
+// Ruta para obtener la lista de proveedores
+app.get('/obtener-proveedor-id/:idProveedor', (req, res) => {
+    const idProveedor = req.params.idProveedor;
+    const consulta = `SELECT * FROM proveedor WHERE idProveedor = ?`;
+
+    db.query(consulta, [idProveedor], (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener la lista de proveedores:', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            console.log(resultados);
+            res.json(resultados);
+        }
+    });
+});
+
+app.post('/editar-proveedor', (req, res) =>{
+    const { idProveedor, nombre, celular, telefono, direccion } = req.body;
+
+    const consulta = 'UPDATE `proveedor` SET `nombre` = ?, `celular` = ?, `telefono` = ?, `direccion` = ? WHERE `idProveedor` = ?';
+    
+    db.query(consulta, [nombre, celular, telefono, direccion, idProveedor], (error, resultados) => {
+        if (error){
+            console.error('Error al editar el proveedor: ', error);
+            res.status(500).json({success: false, error: 'Error interno del servidor al modificar'});
+        } else {
+            console.log("Proveedor modificado correctamente");
+            res.json({ success: true });
+        }
+    })
 });
 
 // Ruta para obtener la lista de proveedores
@@ -535,6 +568,36 @@ app.get('/obtener-producto/:idProducto', (req, res) => {
     });
 });
 
+app.post('/add-existencias-producto', (req, res) =>{
+    const {idProducto, cantidad} = req.body;
+    const consulta = 'UPDATE `producto` SET `existencias` = ? WHERE `idProducto` = ?';
+    
+    db.query(consulta, [cantidad, idProducto], (error, resultados) => {
+        if (error){
+            console.error('Error al modificar el empleado: ', error);
+            res.status(500).json({success: false, error: 'Error interno del servidor al modificar'});
+        } else {
+            console.log("Empleado modificado correctamente");
+            res.json({ success: true });
+        }
+    })
+});
+
+app.post('/modificar-precio-producto', (req, res) =>{
+    const {idProducto, precio} = req.body;
+    const consulta = 'UPDATE `producto` SET `precio` = ? WHERE `idProducto` = ?';
+    
+    db.query(consulta, [precio, idProducto], (error, resultados) => {
+        if (error){
+            console.error('Error al modificar el empleado: ', error);
+            res.status(500).json({success: false, error: 'Error interno del servidor al modificar'});
+        } else {
+            console.log("Empleado modificado correctamente");
+            res.json({ success: true });
+        }
+    })
+});
+
 // Ruta para la insercion de empleados
 app.post('/insertar-empleado', (req, res) => {
     const { cedula, fecha_entrada, sueldo } = req.body;
@@ -603,6 +666,52 @@ app.get('/obtener-empleado/:cedula', (req, res) => {
     });
 });
 
+app.post('/modificar-estado-empleado', (req, res) =>{
+    const {cedula, estado, fecha_salida} = req.body;
+
+    const consulta = 'UPDATE `empleado` SET `estado` = ?, `fecha_salida` = ? WHERE `cedula` = ?';
+    
+    db.query(consulta, [estado, fecha_salida, cedula], (error, resultados) => {
+        if (error){
+            console.error('Error al modificar el empleado: ', error);
+            res.status(500).json({success: false, error: 'Error interno del servidor al modificar'});
+        } else {
+            console.log("Empleado modificado correctamente" + estado + cedula);
+            res.json({ success: true });
+        }
+    })
+});
+
+app.post('/reincorporar-empleado', (req, res) =>{
+    const {cedula, estado, fecha_salida, fecha_entrada} = req.body;
+    const consulta = 'UPDATE `empleado` SET `estado` = ?, `fecha_salida` = ?, `fecha_entrada` = ? WHERE `cedula` = ?';
+    
+    db.query(consulta, [estado, fecha_salida, fecha_entrada, cedula], (error, resultados) => {
+        if (error){
+            console.error('Error al modificar el empleado: ', error);
+            res.status(500).json({success: false, error: 'Error interno del servidor al modificar'});
+        } else {
+            console.log("Empleado modificado correctamente" + estado + cedula);
+            res.json({ success: true });
+        }
+    })
+});
+
+app.post('/modificar-sueldo-empleado', (req, res) =>{
+    const {cedula, sueldo} = req.body;
+    const consulta = 'UPDATE `empleado` SET `sueldo` = ? WHERE `cedula` = ?';
+    
+    db.query(consulta, [sueldo, cedula], (error, resultados) => {
+        if (error){
+            console.error('Error al modificar el empleado: ', error);
+            res.status(500).json({success: false, error: 'Error interno del servidor al modificar'});
+        } else {
+            console.log("Empleado modificado correctamente");
+            res.json({ success: true });
+        }
+    })
+});
+
 //Ruta para insertar facturas
 app.post('/insertar-factura', (req, res) => {
     const { factura, detalles } = req.body;
@@ -656,7 +765,6 @@ app.get('/obtener-facturas', (req, res) => {
 });
 
 // Otras rutas y lógica del servidor...
-
 //Funcion especial para ingreso general de registro en las tablas monetarias
 function insertarRegistro(tipo, fecha, descripcion, valor, id, callback) {
     // Consulta SQL para obtener el último registro

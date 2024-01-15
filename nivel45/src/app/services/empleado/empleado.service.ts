@@ -30,4 +30,37 @@ export class EmpleadoService {
     const url = `${this.apiUrl}/obtener-empleado/${cedula}`;
     return this.http.get<any[]>(url);
   }
+
+  modificarEstadoEmpleado(empleadoData: any): Observable<any> {
+    const url = `${this.apiUrl}/modificar-estado-empleado`;
+    return this.http.post<any>(url, empleadoData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
+  reincorporarEmpleado(empleadoData: any): Observable<any> {
+    const url = `${this.apiUrl}/reincorporar-empleado`;
+    return this.http.post<any>(url, empleadoData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
+  modificarSueldoEmpleado(empleadoData: any): Observable<any> {
+    const url = `${this.apiUrl}/modificar-sueldo-empleado`;
+    return this.http.post<any>(url, empleadoData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
 }

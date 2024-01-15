@@ -1,0 +1,46 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">
+      <h5>Editar Proveedor</h5>
+    </div>
+    <div class="card-body">
+      <form *ngIf="formProveedor" [formGroup]="formProveedor" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!--id del proveedor-->
+          <div class="col-md-3 mb-2">
+            <label for="cedula" class="form-label">idProveedor:</label>
+            <p>{{idProveedor}}</p>
+          </div>
+          <!--Nombre -->
+          <div class="col-md-4 mb-2">
+            <label for="nombre" class="form-label">Nombre:</label>
+            <input type="text" id="nombre" class="form-control" formControlName="nombre">
+          </div>
+        </div>
+        <div class="row">
+          <!--Celular -->
+          <div class="col-md-4 mb-2">
+            <label for="celular" class="form-label">Celular:</label>
+            <input type="text" id="celular" class="form-control" formControlName="celular">
+          </div>
+          <!--Telefono -->
+          <div class="col-md-4 mb-2">
+            <label for="telefono" class="form-label">Teléfono:</label>
+            <input type="text" id="telefono" class="form-control" formControlName="telefono">
+          </div>
+          <!--Direccion -->
+          <div class="col-md-4 mb-2">
+            <label for="direccion" class="form-label">Dirección:</label>
+            <input type="text" id="direccion" class="form-control" formControlName="direccion">
+          </div>
+        </div>
+        <div class="row">
+          <!--Guardar -->
+          <div class="text-end mt-3">
+            <button type="submit" class="btn btn-primary">Guardar </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

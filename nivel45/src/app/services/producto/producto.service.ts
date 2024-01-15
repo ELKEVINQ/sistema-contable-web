@@ -31,4 +31,26 @@ export class ProductoService {
     const url = `${this.apiUrl}/obtener-producto/${idProducto}`;
     return this.http.get<producto[]>(url);
   }
+
+  addExistencias(productoData: any): Observable<any> {
+    const url = `${this.apiUrl}/add-existencias-producto`;
+    return this.http.post<any>(url, productoData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
+  modificarPrecio(productoData: any): Observable<any> {
+    const url = `${this.apiUrl}/modificar-precio-producto`;
+    return this.http.post<any>(url, productoData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
 }

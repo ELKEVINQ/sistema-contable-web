@@ -37,7 +37,7 @@
           <tr *ngFor="let producto of productosPaginados">
               <td>
                   <div class="qr-overlay" (click)="abrirModal(producto, producto.idProducto)">
-                      <img [src]="'https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=' + producto.idProducto" alt="" class="qrimage" style="width: 64px">
+                      <img [src]="'https://zxing.org/w/chart?cht=qr&chs=350x350&chld=L&choe=UTF-8&chl=' + producto.idProducto" alt="" class="qrimage" style="width: 64px">
                       <i class="fa fa-print" (click)="abrirModal(producto, producto.idProducto)"></i>
                   </div>
               </td>
@@ -45,15 +45,13 @@
               <td>{{ producto.nombre}}</td>
               <td>{{ producto.proveedor }}</td>
               <td>{{ producto.precio }}</td>
-              <td>{{ producto.precioIva }}</td>
+              <td>{{ calcularPrecioIva(producto.precio) }}</td>
               <td>
                   <span class="actions1" (click)="addExistencias(producto)">
-                      <i class="fa fa-plus"></i>Añadir
-                  </span>
-                  <span class="actions2" (click)="guardarEstado(producto)">
-                      <i class="fa fa-plus"></i>eliminar
-                  </span>
-                  <!-- Agregar el componente QRCodeComponent para mostrar el código QR -->
+                      <i class="fa fa-plus"></i>Añadir Existencias </span>
+                  <span class="actions2" (click)="modificarPrecio(producto)">
+                    <i class="fa fa-plus"></i>Modificar Precio
+                </span>
               </td>
           </tr>
       </tbody>
@@ -85,7 +83,7 @@
   <div class="card input-group">
       <div class="row">
           <div class="col d-flex justify-content-center">
-              <img [src]="qrImageUrl" class="im-fluid rounded-start" alt="fotoQR">
+            <img *ngIf="qrImageUrl" [src]="qrImageUrl" alt="Código QR">
           </div>
           <div class="col">
               <div class="modal_body card-body">

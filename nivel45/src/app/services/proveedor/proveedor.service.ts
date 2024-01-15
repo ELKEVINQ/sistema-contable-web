@@ -31,6 +31,20 @@ export class ProveedorService {
     return this.http.get<any[]>(url);
   }
 
+  obtenerProveedorPorId(idProveedor: string): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-proveedor-id/${idProveedor}`;
+    return this.http.get<any[]>(url);
+  }
+
   //Por añadir
-  modificarProveedores(proveedorData: any){}
+  editarProveedor(proveedorData: any){
+    const url = `${this.apiUrl}/editar-proveedor`;
+    return this.http.post<any>(url, proveedorData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
 }

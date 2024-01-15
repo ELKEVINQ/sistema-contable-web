@@ -40,12 +40,12 @@
       <td>{{ empleados.idEmpleado }}</td>
       <td>{{ empleados.cedula }}</td>
       <td>{{ empleados.nombres }}</td>
-      <td>{{ empleados.fecha_entrada }}</td>
-      <td>{{ empleados.fecha_salida }}</td>
+      <td>{{ formatearFecha(empleados.fecha_entrada) }}</td>
+      <td>{{ formatearFecha(empleados.fecha_salida) }}</td>
       <td>
-        <select class="form-control form-control-sm" [(ngModel)]="empleados.estado">
-          <option value="activo">Activo</option>
-          <option value="inactivo">Inactivo</option>
+        <select class="form-control form-control-sm" (change)="onEstadoChange($event)" [(ngModel)]="empleados.estado">
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
         </select>
       </td>
       <td>{{ empleados.sueldo }}</td>
@@ -53,8 +53,11 @@
         <span class="actions1" (click)="irAPagar(empleados)">
           <i class="fa fa-plus"></i>Pagar
         </span>
-        <span class="actions2" (click)="guardarEstado(empleados)">
-          <i class="fa fa-plus"></i>Cambiar Estado
+        <span class="actions2" (click)="actualizarEstado(empleados)">
+          <i class="fa fa-plus"></i>Estado
+        </span>
+        <span class="actions3" (click)="modificarSueldo(empleados)">
+          <i class="fa fa-plus"></i>Sueldo
         </span>
       </td>
     </tr>

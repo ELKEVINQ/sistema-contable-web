@@ -5,11 +5,7 @@ import { ClienteService } from '../services/cliente/cliente.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ProductoService } from '../services/producto/producto.service';
 import { Subject, of } from 'rxjs';
-import { WebcamImage } from 'ngx-webcam';
 import { ProductoTabla } from '../interfaces/ProductoTabla'
-import { producto } from '../interfaces/producto';
-import { get } from 'http';
-import { parse } from 'path';
 import { ObraService } from '../services/obras/obras.service';
 
 @Component({
@@ -29,6 +25,7 @@ export class FacturarComponent {
 
   idObra: string = '';
   obras: any[] = [];
+  perteneceObra: boolean = false;
 
   mostrarDropdown = false;
   //modal
@@ -46,7 +43,6 @@ export class FacturarComponent {
   totalFactura: number = 0;
 
   mostrarCamara: boolean = false;
-  tieneObra: boolean = false;
   capturaTrigger: Subject<void> = new Subject<void>();
   facturacionModalSwitch: boolean = false;
   public cameras: MediaDeviceInfo[] = [];
@@ -108,18 +104,29 @@ export class FacturarComponent {
   }
 
   toogleObra() {
-    this.tieneObra = !this.tieneObra;
-    this.facturaForm.get('perteneceObra')?.value(this.tieneObra);
+    if (this.facturaForm.get('cedula')?.value.length < 10){
+      this.perteneceObra = false;
+      this.facturaForm.get('perteneceObra')?.setValue(this.perteneceObra);
+      return;
+    }else{
+      this.perteneceObra = !this.perteneceObra;
+      this.facturaForm.get('perteneceObra')?.setValue(this.perteneceObra);
+    }
   }
 
-  abrirListaObras() {
-    this.obraService.obtenerObrasCedula(this.facturaForm.get('cedula')?.value).subscribe((data: any[]) => {
-      // Filtrar las obras con estado "En Proceso"
-      const obrasEnProceso = data.filter(obra => obra.estado === 'En Proceso');
+  abrirListaObras(cedula: any) {
+    if (cedula === ""){
+      console.log("regreso")
+      return
+    }else{
+      this.obraService.obtenerObrasCedula(cedula).subscribe((data: any[]) => {
+        // Filtrar las obras con estado "En Proceso"
+        const obrasEnProceso = data.filter(obra => obra.estado === 'En Proceso');
 
-      // Agregar las obras filtradas al array 'obras'
-      this.obras.push(...obrasEnProceso);
-    });
+        // Agregar las obras filtradas al array 'obras'
+        this.obras.push(...obrasEnProceso);
+      });
+    }
   }
 
   seleccionarObra(obra: any) {
@@ -130,12 +137,12 @@ export class FacturarComponent {
   }
 
   actualizarTotalFactura(valorPorSumar: number) {
-    this.totalFactura = this.totalFactura + valorPorSumar;
-    this.totalFactura = parseFloat(this.totalFactura.toFixed(2));
-    this.ivaFactura = this.totalFactura * 0.12;
-    this.ivaFactura = parseFloat(this.ivaFactura.toFixed(2));
-    this.subTotalFactura = this.totalFactura - (this.ivaFactura);
+    this.subTotalFactura = this.subTotalFactura + valorPorSumar;
     this.subTotalFactura = parseFloat(this.subTotalFactura.toFixed(2));
+    this.ivaFactura = this.subTotalFactura * 0.12;
+    this.ivaFactura = parseFloat(this.ivaFactura.toFixed(2));
+    this.totalFactura = this.subTotalFactura + (this.ivaFactura);
+    this.totalFactura = parseFloat(this.totalFactura.toFixed(2));
   }
 
   actualizarPrecioT() {
@@ -319,9 +326,9 @@ export class FacturarComponent {
       this.clienteService.obtenerCliente(this.cedula).subscribe((data: any) => {
         // Filtrar el cliente por la cédula
         const cliente = data;
-        this.facturaForm.get('nombres')?.setValue(cliente.nombres + " " + cliente.apellidos);
-          this.abrirListaObras();
+        this.facturaForm.get('nombres')?.setValue(cliente[0].nombres + " " + cliente[0].apellidos);
       });
+      this.abrirListaObras(this.cedula);
     } else {
       this.facturaForm.get('nombres')?.setValue('');
     }
