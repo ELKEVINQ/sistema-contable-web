@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClienteService } from '../services/cliente/cliente.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-cliente',
@@ -10,7 +11,7 @@ import { ClienteService } from '../services/cliente/cliente.service';
 export class AddClienteComponent {
   clienteForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private clienteService: ClienteService) {
+  constructor(private fb: FormBuilder, private clienteService: ClienteService, private router: Router) {
     this.clienteForm = this.fb.group({
       cedula: ['', [Validators.required]],
       nombres: ['', Validators.required],
@@ -83,6 +84,11 @@ export class AddClienteComponent {
     return regex.test(correo) ? null : { 'invalidEmailFormat': true };
   }
 
+  volver() {
+    this.router.navigate(['/p/lista-clientes'], {
+    });
+  }
+
   onSubmit() {
     if (this.clienteForm.valid) {
       const clienteData = this.clienteForm.value;
@@ -91,6 +97,7 @@ export class AddClienteComponent {
       this.clienteService.insertarCliente(clienteData).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Cliente insertado correctamente');
+          this.volver();
           // Puedes hacer más cosas aquí, como redirigir a otra página
         } else {
           alert('Error al insertar el cliente');

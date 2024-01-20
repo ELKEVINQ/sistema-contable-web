@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProveedorService } from '../services/proveedor/proveedor.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-proveedor',
@@ -10,7 +11,7 @@ import { ProveedorService } from '../services/proveedor/proveedor.service';
 export class AddProveedorComponent {
   proveedorForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private proveedorService: ProveedorService) {}
+  constructor(private fb: FormBuilder, private proveedorService: ProveedorService, private router: Router) {}
 
   ngOnInit(): void {
     this.proveedorForm = this.fb.group({
@@ -18,6 +19,11 @@ export class AddProveedorComponent {
       telefono: [''],
       celular: [''],
       direccion: [''],
+    });
+  }
+
+  volver() {
+    this.router.navigate(['/p/lista-clientes'], {
     });
   }
 
@@ -30,6 +36,7 @@ export class AddProveedorComponent {
       this.proveedorService.insertarProveedor(proveedorData).subscribe((response: any) => {
           if (response.success) {
             alert('Proveedor insertado correctamente');
+            this.volver();
           } else {
             alert('Error al insertar el proveedor');
           }

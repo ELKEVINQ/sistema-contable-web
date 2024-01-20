@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EmpleadoService } from '../services/empleado/empleado.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ClienteService } from '../services/cliente/cliente.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-empleado',
@@ -14,7 +15,7 @@ export class AddEmpleadoComponent {
   cedula: string = '';
   nombres: string = '';
 
-  constructor(private fb: FormBuilder, private empleadoService: EmpleadoService, private clienteService: ClienteService) {}
+  constructor(private fb: FormBuilder, private empleadoService: EmpleadoService, private clienteService: ClienteService, private router: Router) {}
 
   ngOnInit(): void {
     this.empleadoForm = this.fb.group({
@@ -60,6 +61,11 @@ export class AddEmpleadoComponent {
     }
   }
 
+  volver() {
+    this.router.navigate(['/p/lista-empleados'], {
+    });
+  }
+
   onSubmit() {
     // Verificar si el formulario es válido
     if (this.empleadoForm.valid) {
@@ -81,6 +87,7 @@ export class AddEmpleadoComponent {
       this.empleadoService.insertarEmpleado({ cedula, fecha_entrada: fechaFormateada, sueldo, estado: "Activo" }).subscribe((response: any) => {
         if (response.success) {
           alert('Empleado insertado correctamente');
+          this.volver();
         } else {
           alert('Error al insertar el empleado');
         }

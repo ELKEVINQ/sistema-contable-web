@@ -8,7 +8,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InicioComponent } from './inicio/inicio.component';
 import { NosotrosComponent } from './nosotros/nosotros.component';
 import { ObrasComponent } from './obras/obras.component';
-import { ContactoComponent } from './contacto/contacto.component';
 import { AddAnticipoComponent } from './add-anticipo/add-anticipo.component';
 import { AddProveedorComponent } from './add-proveedor/add-proveedor.component';
 import { ListaAnticiposComponent } from './lista-anticipos/lista-anticipos.component';
@@ -34,6 +33,8 @@ import { WebcamModule } from 'ngx-webcam';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { EditarClienteComponent } from './editar-cliente/editar-cliente.component';
 import { EditarProveedorComponent } from './editar-proveedor/editar-proveedor.component';
+import { ContactoComponent } from './contacto/contacto.component';
+import { ListaRolesComponent } from './lista-roles/lista-roles.component';
 
 
 @NgModule({
@@ -66,6 +67,7 @@ import { EditarProveedorComponent } from './editar-proveedor/editar-proveedor.co
     AddClienteComponent,
     EditarClienteComponent,
     EditarProveedorComponent,
+    ListaRolesComponent,
   ],
   imports: [
     BrowserModule,

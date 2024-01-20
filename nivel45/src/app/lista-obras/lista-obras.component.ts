@@ -69,13 +69,19 @@ export class ListaObrasComponent {
     this.obraService.modificarObra( { idObra, estado } ).subscribe((response: { success: any; }) => {
       if (response.success){
         alert('Estado modificado correctamente')
-        console.log("Bien?")
+        this.reloadPage();
       }else{
         alert('Fallo al modificar el estado')
-        console.log("Mal?")
       }
       this.estadoTemporal = "";
     });
+  }
+
+  reloadPage() {
+    // Realiza la recarga de la página sin cerrar la sesión
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([this.router.url]);
   }
 
   seleccionarColumna() {

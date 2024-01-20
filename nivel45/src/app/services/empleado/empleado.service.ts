@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, catchError } from 'rxjs';
 
 @Injectable({
@@ -56,6 +56,23 @@ export class EmpleadoService {
   modificarSueldoEmpleado(empleadoData: any): Observable<any> {
     const url = `${this.apiUrl}/modificar-sueldo-empleado`;
     return this.http.post<any>(url, empleadoData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
+  obtenerAnticiposEmpleado(idEmpleado: any, fecha: any): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-anticipos-empleado`;
+
+    // Agrega los parámetros a la URL
+    const params = new HttpParams()
+      .set('idEmpleado', idEmpleado.toString())
+      .set('fecha', fecha);
+
+    return this.http.get<any[]>(url, { params })
       .pipe(
         catchError((error) => {
           console.error('Error en la solicitud HTTP:', error);

@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { InicioComponent } from './inicio/inicio.component';
 import { NosotrosComponent } from './nosotros/nosotros.component';
 import { ObrasComponent } from './obras/obras.component';
-import { ContactoComponent } from './contacto/contacto.component';
 import { LoginComponent } from './login/login.component';
 import { AddAnticipoComponent } from './add-anticipo/add-anticipo.component';
 import { AddProveedorComponent } from './add-proveedor/add-proveedor.component';
@@ -26,6 +25,7 @@ import { ListaEmpleadosComponent } from './lista-empleados/lista-empleados.compo
 import { AddClienteComponent } from './add-cliente/add-cliente.component';
 import { EditarClienteComponent } from './editar-cliente/editar-cliente.component';
 import { EditarProveedorComponent } from './editar-proveedor/editar-proveedor.component';
+import { ContactoComponent } from './contacto/contacto.component';
 
 const routes: Routes = [
   { path: 'inicio', component: InicioComponent },

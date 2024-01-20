@@ -13,7 +13,7 @@ export class FacturaService {
   insertarFactura(facturaData: any, detallesFactura: any[]): Observable<any> {
     const url = `${this.apiUrl}/insertar-factura`;
     const body = { factura: facturaData, detalles: detallesFactura };
-  
+
     return this.http.post<any>(url, body)
       .pipe(
         catchError((error) => {
@@ -22,9 +22,25 @@ export class FacturaService {
         })
       );
   }
-  
+
   obtenerFacturas(): Observable<any[]> {
     const url = `${this.apiUrl}/obtener-facturas`;
     return this.http.get<any[]>(url);
+  }
+
+  obtenerDetalleFactura(idFactura:any): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-detalle-factura/${idFactura}`;
+    return this.http.get<any[]>(url);
+  }
+
+  anularFactura(facturaData: any): Observable<any>{
+    const url = `${this.apiUrl}/anular-factura`;
+    return this.http.post<any>(url, facturaData)
+    .pipe(
+      catchError((error) => {
+        console.error('Error en la solicitud HTTP:', error);
+        throw error; // Propaga el error para que otros puedan manejarlo
+      })
+    );
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RegistroService } from '../services/registro/registro.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
@@ -19,7 +19,7 @@ export class AddAnticipoComponent implements OnInit {
   descripcion: string | null = null;
   fecha: Date | null = null;
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private registroService: RegistroService) {
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private registroService: RegistroService, private router: Router) {
     this.anticipoForm = this.fb.group({
       idObra: [''],
       cedula: [''],
@@ -72,6 +72,11 @@ export class AddAnticipoComponent implements OnInit {
     return '';
   }
 
+  volver() {
+    this.router.navigate(['/p/lista-anticipos'], {
+    });
+  }
+
   onSubmit() {
     if (this.anticipoForm.valid) {
       const anticipoData = this.anticipoForm.value;
@@ -83,6 +88,7 @@ export class AddAnticipoComponent implements OnInit {
       this.registroService.insertarAnticipo(anticipoData).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Anticipo insertado correctamente');
+          this.volver()
           // Puedes hacer más cosas aquí, como redirigir a otra página
         } else {
           alert('Error al insertar el anticipo');

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RegistroService } from '../services/registro/registro.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ObraService } from '../services/obras/obras.service';
+import { EmpleadoService } from '../services/empleado/empleado.service';
 
 @Component({
   selector: 'app-registrar-compra',
@@ -16,13 +17,18 @@ export class RegistrarCompraComponent {
   fecha: Date | null = null;
   valor: number | null = null;
   perteneceObra: boolean | null = null;
+  perteneceEmpleado: boolean | null = null;
+  esAnticipo: boolean = false;
 
   tieneObra: boolean = false;
 
   idObra: string = '';
   obras: any[] = [];
 
-  constructor(private fb: FormBuilder, private registroService: RegistroService, private obraService: ObraService) {
+  idEmpleado: string = '';
+  empleados: any[] = [];
+
+  constructor(private fb: FormBuilder, private registroService: RegistroService, private obraService: ObraService, private empleadoService: EmpleadoService) {
     this.compraForm = this.fb.group({
       descripcion: [''],
       valor: ['', [Validators.pattern('[0-9]+(\.[0-9]+)?')]],
@@ -54,6 +60,23 @@ export class RegistrarCompraComponent {
     });
   }
 
+  abrirListaEmpleados() {
+    this.empleadoService.obtenerEmpleados().subscribe((data: any[]) => {
+      // Filtrar las obras con estado "En Proceso"
+      const empleados = data.filter(empleado => empleado.estado === 'Activo');
+
+      // Agregar las obras filtradas al array 'obras'
+      this.empleados.push(...empleados);
+    });
+  }
+
+  seleccionarEmpleado(empleado: any) {
+    // Aquí puedes realizar cualquier acción que desees con la obra seleccionada
+    this.idEmpleado = empleado.idEmpleado;
+    this.toogleEmpleados();
+    // Puedes, por ejemplo, abrir un modal, navegar a otra página, etc.
+  }
+
   seleccionarObra(obra: any) {
     // Aquí puedes realizar cualquier acción que desees con la obra seleccionada
     this.idObra = obra.idObra;
@@ -65,6 +88,12 @@ export class RegistrarCompraComponent {
   toogleObra() {
     this.tieneObra = !this.tieneObra;
     this.compraForm.get('perteneceObra')?.setValue(this.tieneObra);
+  }
+
+  toogleEmpleados() {
+    this.esAnticipo = !this.esAnticipo;
+    this.compraForm.get('perteneceEmpleado')?.setValue(this.esAnticipo);
+    this.abrirListaEmpleados()
   }
 
   formatToMySQLDate(date: NgbDateStruct): string {
@@ -85,7 +114,7 @@ export class RegistrarCompraComponent {
       const fechaFormat = this.formatToMySQLDate(fecha);
 
       // Llama al servicio para insertar el anticipo
-      this.registroService.insertarGasto({descripcion, valor, fecha: fechaFormat, idObra: this.idObra}).subscribe((response: { success: any; }) => {
+      this.registroService.insertarGasto({descripcion, valor, fecha: fechaFormat, idObra: this.idObra, idEmpleado: this.idEmpleado}).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Compra insertada correctamente');
           // Puedes hacer más cosas aquí, como redirigir a otra página

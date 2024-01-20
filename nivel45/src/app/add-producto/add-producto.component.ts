@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProductoService } from '../services/producto/producto.service';
 import { ProveedorService } from '../services/proveedor/proveedor.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-producto',
@@ -19,7 +20,7 @@ export class AddProductoComponent {
   precioIva: number | null = null;
   existencias: number | null = null;
 
-  constructor(private fb: FormBuilder, private productoService: ProductoService, private proveedorService: ProveedorService) {
+  constructor(private fb: FormBuilder, private productoService: ProductoService, private proveedorService: ProveedorService, private router: Router) {
     this.productoForm = this.fb.group({
       idProveedor: [''],
       nombre: [''],
@@ -35,7 +36,7 @@ export class AddProductoComponent {
     this.productoForm.get('precio')?.valueChanges.subscribe((nuevoValor) => {
       // Multiplica por 1.12 y redondea a 3 decimales
       const precioIva = parseFloat((nuevoValor * 1.12).toFixed(3));
-  
+
       // Actualiza el valor del campo precioIva
       this.productoForm.patchValue({
         precioIva: precioIva
@@ -56,13 +57,13 @@ export class AddProductoComponent {
 
   onInputChange() {
     const nombre = this.productoForm.get('nombreProveedor')?.value;
-  
+
     if (nombre) {
       this.proveedorService.obtenerProveedorPorNombre(nombre).subscribe((proveedores) => {
-  
+
         // Verificar si hay algún proveedor con el nombre dado
         const proveedorEncontrado = proveedores.find(proveedor => proveedor.nombre === nombre);
-  
+
         if (proveedorEncontrado) {
           alert("Proveedor encontrado: " + nombre);
           this.productoForm.get('idProveedor')?.setValue(proveedorEncontrado.idProveedor);
@@ -70,7 +71,11 @@ export class AddProductoComponent {
       });
     }
   }
-  
+
+  volver() {
+    this.router.navigate(['/p/lista-clientes'], {
+    });
+  }
 
   onSubmit() {
     if (this.productoForm.valid) {
@@ -82,6 +87,7 @@ export class AddProductoComponent {
       this.productoService.insertarProducto(productoData).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Producto insertado correctamente');
+          this.volver();
           // Puedes hacer más cosas aquí, como redirigir a otra página
         } else {
           alert('Error al insertar el producto');

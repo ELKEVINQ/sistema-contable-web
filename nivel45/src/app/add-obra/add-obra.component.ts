@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ObraService } from '../services/obras/obras.service';
 import { ClienteService } from '../services/cliente/cliente.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-obra',
@@ -12,7 +13,7 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 export class AddObraComponent implements OnInit {
   obraForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private obraService: ObraService , private clienteService: ClienteService) {}
+  constructor(private fb: FormBuilder, private obraService: ObraService , private clienteService: ClienteService, private router: Router) {}
 
   ngOnInit(): void {
     this.obraForm = this.fb.group({
@@ -55,6 +56,11 @@ export class AddObraComponent implements OnInit {
     return '';
   }
 
+  volver() {
+    this.router.navigate(['/p/lista-clientes'], {
+    });
+  }
+
   onSubmit() {
     // Verificar si el formulario es válido
     if (this.obraForm.valid) {
@@ -69,6 +75,7 @@ export class AddObraComponent implements OnInit {
         .subscribe((response: any) => {
           if (response.success) {
             alert('Obra insertada correctamente');
+            this.volver()
             // Puedes redirigir a otra página o realizar otras acciones aquí
           } else {
             alert('Error al insertar la obra');

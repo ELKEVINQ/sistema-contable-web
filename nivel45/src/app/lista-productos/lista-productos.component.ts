@@ -176,6 +176,7 @@ export class ListaProductosComponent {
         this.productoService.modificarPrecio( { idProducto, precio } ).subscribe((response: { success: any; }) => {
           if (response.success){
             alert('Precio modificado correctamente ' + precio)
+            this.reloadPage();
           }else{
             alert('Fallo al modificar el precio')
           }
@@ -186,6 +187,13 @@ export class ListaProductosComponent {
     }else{
       alert("No ingresaste ningun valor")
     }
+  }
+
+  reloadPage() {
+    // Realiza la recarga de la página sin cerrar la sesión
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([this.router.url]);
   }
 
   guardarEstado(productos: any) {

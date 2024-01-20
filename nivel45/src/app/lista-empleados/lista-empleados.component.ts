@@ -34,7 +34,18 @@ export class ListaEmpleadosComponent {
   }
 
   irAPagar(empleado: any) {
-    this.router.navigate(['/p/pagar-rol'], { queryParams: { idEmpleado: empleado.idEmpleado, cedula: empleado.cedula, nombres: empleado.nombres } });
+    this.router.navigate(['/p/pagar-rol'], { queryParams: {
+      idEmpleado: empleado.idEmpleado,
+      cedula: empleado.cedula,
+      nombres: empleado.nombres,
+      sueldo: empleado.sueldo
+     } });
+  }
+
+  irAMovimientos(empleado: any){
+    this.router.navigate(['/p/movimientos-empleado'], { queryParams: {
+      idEmpleado: empleado.idEmpleado,
+     } });
   }
 
   actualizarEstado(empleado: any) {
@@ -65,12 +76,20 @@ export class ListaEmpleadosComponent {
       this.empleadoService.reincorporarEmpleado( { cedula, estado, fecha_salida: "0000-00-00", fecha_entrada: fecha_salida } ).subscribe((response: { success: any; }) => {
         if (response.success){
           alert('Estado modificado correctamente')
+          this.reloadPage();
         }else{
           alert('Fallo al modificar el estado')
         }
         this.estadoTemporal = "";
       });
     }
+  }
+
+  reloadPage() {
+    // Realiza la recarga de la página sin cerrar la sesión
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([this.router.url]);
   }
 
   modificarSueldo(empleado: any){
@@ -106,10 +125,10 @@ export class ListaEmpleadosComponent {
   }
 
   ngOnInit() {
-    this.obtenerObras();
+    this.obtenerEmpleados();
   }
 
-  obtenerObras() {
+  obtenerEmpleados() {
     this.empleadoService.obtenerEmpleados().subscribe((data: any[]) => {
       this.empleados = data;
       this.aplicarFiltros();

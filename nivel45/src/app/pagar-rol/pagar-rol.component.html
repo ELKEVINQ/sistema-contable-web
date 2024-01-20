@@ -22,6 +22,11 @@
             <label for="nombres" class="form-label">Nombres:</label>
             <input type="text" id="nombres" class="form-control" formControlName="nombres" readonly>
           </div>
+          <!--Nombre del cliente traida de la tabla-->
+          <div class="col-md-4 mb-2">
+            <label for="anticiposSumados" class="form-label">ValorAnticipo:</label>
+            <input type="text" id="anticiposSumados" class="form-control" formControlName="anticiposSumados" readonly>
+          </div>
         </div>
         <!--Campos ingresados-->
         <div class="row">
@@ -32,10 +37,10 @@
           </div>
           <!-- Fecha de Inicio -->
           <div class="col-md-5 mb-2">
-            <label for="fecha" class="form-label">Fecha:</label>
+            <label for="fecha" class="form-label">Fecha de inicio:</label>
             <div class="input-group">
               <input class="form-control form-control-sm" formControlName="fecha" ngbDatepicker #dp="ngbDatepicker"
-                readonly /><!-- Agregado form-control-sm para hacerlo más pequeño -->
+                readonly id="fecha"/><!-- Agregado form-control-sm para hacerlo más pequeño -->
               <div class="input-group-append">
                 <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">
                   <!-- Modificado el contenido del botón -->

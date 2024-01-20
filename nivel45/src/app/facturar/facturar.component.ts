@@ -5,8 +5,9 @@ import { ClienteService } from '../services/cliente/cliente.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ProductoService } from '../services/producto/producto.service';
 import { Subject, of } from 'rxjs';
-import { ProductoTabla } from '../interfaces/ProductoTabla'
 import { ObraService } from '../services/obras/obras.service';
+import { ProductoTabla } from '../interfaces/ProductoTabla';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-facturar',
@@ -50,7 +51,7 @@ export class FacturarComponent {
 
   private destroy$: Subject<void> = new Subject<void>();
 
-  constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService, private obraService: ObraService) { }
+  constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService, private obraService: ObraService, private router: Router) { }
 
   ngOnInit(): void {
     this.productoService.obtenerProductos().subscribe((data: any[]) => {
@@ -83,15 +84,15 @@ export class FacturarComponent {
       precioFinalModal: [''],
     });
 
-    this.cuerpoFacturaForm.get('precioU')?.valueChanges.subscribe((nuevoValorPrecioU) => {
+    this.cuerpoFacturaForm.get('precioU')?.valueChanges.subscribe(() => {
       this.actualizarPrecioT();
     });
 
-    this.cuerpoFacturaForm.get('cantidad')?.valueChanges.subscribe((nuevoValorCantidad) => {
+    this.cuerpoFacturaForm.get('cantidad')?.valueChanges.subscribe(() => {
       this.actualizarPrecioT();
     });
 
-    this.addProductoFormModal.get('cantidadModal')?.valueChanges.subscribe((nuevoValorCantidad) => {
+    this.addProductoFormModal.get('cantidadModal')?.valueChanges.subscribe(() => {
       if (this.addProductoFormModal.get('cantidadModal')?.value !== '') {
         this.actualizarPrecioF();
       }
@@ -354,6 +355,11 @@ export class FacturarComponent {
     }
   }
 
+  volver() {
+    this.router.navigate(['/p/lista-facturas'], {
+    });
+  }
+
   guardarFactura() {
     // Verificar si el formulario es válido
     if (this.checkBeforeSend()) {
@@ -365,7 +371,7 @@ export class FacturarComponent {
 
       // Crear el objeto de factura
       const facturaData = {
-        idFactura: '0000-0000-0004',
+        idFactura: '0000-0000-0005',
         cedula,
         fecha: fechaFormateada,
         subtotal: this.subTotalFactura,
@@ -381,6 +387,7 @@ export class FacturarComponent {
       this.facturaService.insertarFactura(facturaData, this.productosTabla).subscribe((response: any) => {
         if (response.success) {
           alert('Factura insertada correctamente');
+          this.volver();
         } else {
           alert('Error al insertar la factura');
         }
