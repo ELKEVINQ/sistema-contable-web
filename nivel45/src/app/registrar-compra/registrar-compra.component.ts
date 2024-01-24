@@ -16,8 +16,8 @@ export class RegistrarCompraComponent {
   descripcion: string | null = null;
   fecha: Date | null = null;
   valor: number | null = null;
-  perteneceObra: boolean | null = null;
-  perteneceEmpleado: boolean | null = null;
+  perteneceObra: boolean = false;
+  perteneceEmpleado: boolean = false;
   esAnticipo: boolean = false;
 
   tieneObra: boolean = false;

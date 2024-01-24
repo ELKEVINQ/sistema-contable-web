@@ -26,6 +26,7 @@ import { AddClienteComponent } from './add-cliente/add-cliente.component';
 import { EditarClienteComponent } from './editar-cliente/editar-cliente.component';
 import { EditarProveedorComponent } from './editar-proveedor/editar-proveedor.component';
 import { ContactoComponent } from './contacto/contacto.component';
+import { ListaRolesComponent } from './lista-roles/lista-roles.component';
 
 const routes: Routes = [
   { path: 'inicio', component: InicioComponent },
@@ -53,6 +54,7 @@ const routes: Routes = [
       { path: 'lista-obras', component: ListaObrasComponent },
       { path: 'lista-productos', component: ListaProductosComponent },
       { path: 'lista-proveedores', component: ListaProveedoresComponent },
+      { path: 'lista-roles', component: ListaRolesComponent },
       { path: 'registrar-compra', component: RegistrarCompraComponent },
       { path: 'registrar-factura-compra', component: RegistrarFacturaCompraComponent },
       { path: 'registro-general', component: RegistroGeneralComponent },

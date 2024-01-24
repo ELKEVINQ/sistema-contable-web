@@ -29,7 +29,7 @@
           <div class="col-md-5 mb-2">
             <label for="fecha" class="form-label">Fecha:</label>
             <div class="input-group">
-              <input class="form-control form-control-sm" formControlName="fecha" ngbDatepicker #dp="ngbDatepicker"
+              <input id="fecha" class="form-control form-control-sm" formControlName="fecha" ngbDatepicker #dp="ngbDatepicker"
                 readonly /><!-- Agregado form-control-sm para hacerlo más pequeño -->
               <div class="input-group-append">
                 <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">

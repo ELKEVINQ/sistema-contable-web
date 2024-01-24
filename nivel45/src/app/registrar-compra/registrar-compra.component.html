@@ -1,7 +1,7 @@
 <div class="container mt-3">
   <div class="card">
     <div class="card-header bg-primary text-white">
-      <h4><i class="fa fa-question-circle"></i> Registrar compra</h4>
+      <h4><i class="fa fa-question-circle"></i> Registrar gasto</h4>
     </div>
     <div class="card-body">
       <form *ngIf="compraForm" [formGroup]="compraForm" (ngSubmit)="onSubmit()">
@@ -17,7 +17,7 @@
           <div class="col-md-5 mb-2">
             <label for="fecha" class="form-label">Fecha:</label>
             <div class="input-group">
-              <input class="form-control form-control-sm" formControlName="fecha" ngbDatepicker #dp="ngbDatepicker"
+              <input id="fecha" class="form-control form-control-sm" formControlName="fecha" ngbDatepicker #dp="ngbDatepicker"
                 readonly /><!-- Agregado form-control-sm para hacerlo más pequeño -->
               <div class="input-group-append">
                 <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">

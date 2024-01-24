@@ -810,55 +810,10 @@ app.get('/obtener-anticipos-empleado', (req, res) => {
 
 app.get('/obtener-roles-empleado/:idEmpleado', (req, res) => {
     const idEmpleado = req.params.idEmpleado;
-    const consulta = `
-    SELECT
-        r.valor AS valorRol,
-        r.anticipo AS anticipoRol,
-        r.observaciones AS observacionesRol,
-        r.fechaInicio AS fechaRol,
-        reg.fecha AS fechaRegistro,
-        g.valor AS valorGasto,
-        'Gasto' AS Tipo
-    FROM
-        gastos g
-    LEFT JOIN
-        roldepago r ON r.idEmpleado = g.idEmpleado
-    LEFT JOIN
-        registro reg ON reg.idGasto = g.idGasto
-    WHERE
-        g.idEmpleado = ? AND NOT EXISTS (
-            SELECT 1 FROM roldepago rp
-            WHERE rp.idEmpleado = ?
-        )
-        AND reg.idGasto IS NOT NULL
-        AND reg.idRol IS NULL
+    //valor: any, fechaInicio: any, fechaPago: any, observaciones: any, anticiposSumados: any
+    const consulta = `SELECT rol.valor, rol.fechaInicio, rol.observaciones, rol.anticipo, reg.fecha as fechaPago FROM roldepago rol, registro reg WHERE rol.idEmpleado = ? and rol.idRol = reg.idRol`;
 
-    UNION ALL
-
-    SELECT
-        r.valor AS valorRol,
-        r.anticipo AS anticipoRol,
-        r.observaciones AS observacionesRol,
-        r.fechaInicio AS fechaPagoRol,
-        reg.fecha AS fechaPagoRegistro,
-        NULL AS valorGasto,
-        'Anticipo' AS Tipo
-    FROM
-        gastos g
-    LEFT JOIN
-        roldepago r ON r.idEmpleado = g.idEmpleado
-    LEFT JOIN
-        registro reg ON reg.idGasto = g.idGasto
-    WHERE
-        g.idEmpleado = ? AND NOT EXISTS (
-            SELECT 1 FROM roldepago rp
-            WHERE rp.idEmpleado = ?
-        )
-        AND reg.idGasto IS NULL
-        AND reg.idRol IS NOT NULL
-`;
-
-    db.query(consulta, [idEmpleado, idEmpleado], (error, resultados) => {
+    db.query(consulta, [idEmpleado], (error, resultados) => {
         if (error) {
             console.error('Error al obtener la lista de proveedores:', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor' });

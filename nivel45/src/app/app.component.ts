@@ -49,19 +49,16 @@ export class AppComponent implements AfterViewInit {
       const totalContentHeight = mainHeight + footerHeight + navHeight; // Tamaño total del contenido de la página
 
       if (mainBottom - footerHeight != 0 && mainBottom > totalContentHeight) {
-        console.log("Entro el primero");
         footer.style.position = 'fixed';
       } else {
         if (footerBottom > footerHeight && totalContentHeight < windowHeight) {
-          console.log("Entro el segundo");
           footer.style.position = 'fixed';
         } else {
-          console.log("Entro el tercero");
           footer.style.position = 'relative';
         }
       }
     };
-    
+
     // Llamamos a la función al cargar la página
     updateFooter();
   }

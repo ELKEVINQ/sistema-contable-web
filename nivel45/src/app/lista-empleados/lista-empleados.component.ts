@@ -42,9 +42,11 @@ export class ListaEmpleadosComponent {
      } });
   }
 
-  irAMovimientos(empleado: any){
-    this.router.navigate(['/p/movimientos-empleado'], { queryParams: {
+  irARoles(empleado: any){
+    this.router.navigate(['/p/lista-roles'], { queryParams: {
       idEmpleado: empleado.idEmpleado,
+      cedula: empleado.cedula,
+      nombres: empleado.nombres
      } });
   }
 
