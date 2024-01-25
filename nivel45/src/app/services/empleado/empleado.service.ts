@@ -9,7 +9,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts'; // Importa pdfFonts
   providedIn: 'root'
 })
 export class EmpleadoService {
-  private apiUrl = 'http://localhost:3000'; // Cambia a tu URL real
+  private apiUrl = 'http://186.43.220.127:8081';
 
   constructor(private http: HttpClient) {
     (window as any).pdfMake.vfs = pdfFonts.pdfMake.vfs;

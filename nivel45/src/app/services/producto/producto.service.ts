@@ -7,7 +7,7 @@ import { producto } from '../../interfaces/producto';
   providedIn: 'root'
 })
 export class ProductoService {
-  private apiUrl = 'http://localhost:3000'; // Cambia a tu URL real
+  private apiUrl = 'http://186.43.220.127:8081';
 
   constructor(private http: HttpClient) { }
 

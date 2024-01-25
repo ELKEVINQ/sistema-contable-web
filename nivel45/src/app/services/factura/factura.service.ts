@@ -6,7 +6,7 @@ import { Observable, catchError } from 'rxjs';
   providedIn: 'root'
 })
 export class FacturaService {
-  private apiUrl = 'http://localhost:3000'; // Cambia a tu URL real
+  private apiUrl = 'http://186.43.220.127:8081';
 
   constructor(private http: HttpClient) {}
 

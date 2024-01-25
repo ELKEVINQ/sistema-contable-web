@@ -1,10 +1,11 @@
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Importa el paquete CORS
+const cors = require('cors');
 const { error } = require('console');
 
 const app = express();
+const port = 8081;
 
 // Configuración de la conexión a MySQL
 const db = mysql.createConnection({
@@ -27,6 +28,13 @@ db.connect((err) => {
     } else {
         console.log('Conexión exitosa a MySQL');
     }
+});
+
+// Permitir acceso desde cualquier origen (CORS)
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
 });
 
 // Ruta para la autenticación
@@ -885,7 +893,6 @@ function formatarFecha(fecha) {
     return `${año}/${mes}/${dia}`;
 }
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor en ejecución en el puerto ${PORT}`);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Servidor corriendo en http://localhost:${port}`);
 });
