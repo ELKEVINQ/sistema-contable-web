@@ -1,5 +1,75 @@
-.banner{
-  width: 1300px;
+.banner, .banner-img{
+  width: 100%;
+  height: 100%;
   justify-content: center;
+  margin: 0;
+}
+
+h1{
+  justify-content: center;
+  position: absolute;
   margin: auto;
+  top: 30%;
+  width: 99%;
+  text-align: center;
+  color: white;
+}
+
+.mid{
+  width: 100%;
+  height: fit-content;
+  justify-content: space-around;
+  flex-direction: row;
+  display: flex;
+}
+
+h3{
+  height: 75px;
+  border-bottom: 2px solid #EAECEE;
+}
+
+.puertas, .techos, .pasamanos, .escaleras, .templado {
+  border: 5px solid white;
+  background-color: white;
+  border-radius: 10px;
+  margin: 20px;
+  width: 20%;
+  position: relative; /* Cambiado a relativo */
+  justify-content: center;
+}
+
+.text-p {
+  text-align: justify;
+  height: max-content;
+  margin-bottom: 50px; /* Agrega un margen inferior para dejar espacio al botón */
+}
+
+.boton-mas {
+  width: 50%;
+  margin: auto;
+  border: none;
+  color: white;
+  background-color: #2471A3;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  position: absolute; /* Cambiado a absoluto */
+  bottom: 10px; /* Ajusta según tu preferencia */
+  left: 50%; /* Ajusta según tu preferencia */
+  transform: translateX(-50%); /* Centra horizontalmente */
+}
+
+.end{
+  justify-content: center;
+  flex-direction: row;
+  display: flex;
+}
+
+h2{
+  text-align: center;
+}
+
+.video{
+  margin-bottom: 30px;
 }
