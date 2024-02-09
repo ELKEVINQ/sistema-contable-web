@@ -1,7 +1,7 @@
 .body-cabinas, .body-puertas, .body-pasamanos, .body-techos, .body-escaleras{
   width: 100%;
-  height: fit-content;
-  flex-direction: row;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 .cabinas, .puertas, .techos, .pasamanos, .escaleras{
@@ -19,10 +19,11 @@ h3{
 img{
   max-width: 300px;
   max-height: 600px;
-  float: right;
   margin-right: 20px;
+  margin-bottom: 10px;
 }
 
 p{
   margin-left: 20px;
+  width: 60%;
 }

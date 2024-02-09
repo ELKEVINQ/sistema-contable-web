@@ -7,58 +7,50 @@ import Integer from '@zxing/library/esm/core/util/Integer';
   styleUrls: ['./nosotros.component.css']
 })
 export class NosotrosComponent implements OnInit {
+  descripcionCabina: String[][] = [
+    ['Cabina con puerta batiente a 45°'],
+    ['../../assets/trabajos/Cabina con puerta batiente a 45°.JPG']
+  ];
+  rutaCabinaActual: String = "";
+  descripcionCabinaActual: String = "";
 
-  descripciones: String[][] = [
+  descripcionTecho: String[][] = [
     [],
     []
   ];
+  rutaTechoActual: String = "";
+  descripcionTechoActual: String = "";
 
-  descripcionCabina: String = "Cabina";
-  descripcionTecho: String = "Techo";
-  descripcionPasamano: String = "Pasamano";
-  descripcionEscalera: String = "Escalera";
-  descripcionPuerta: String = "Puerta";
+  descripcionPasamano: String[][] = [
+    [],
+    []
+  ];
+  rutaPasamanoActual: String = "";
+  descripcionPasamanoActual: String = "";
 
-  rutaCabina: String = "";
-  rutaTecho: String = "";
-  rutaPasamano: String = "";
-  rutaEscalera: String = "";
-  rutaPuerta: String = "";
+  descripcionEscalera: String[][] = [
+    [],
+    []
+  ];
+  rutaEscaleraActual: String = "";
+  descripcionEscaleraActual: String = "";
 
-  //the items for both arrays will be in this order: cabina, techo, pasamano, escalera, puerta
-  carrouselActualPosition: number[] = [0,0,0,0,0];
-  carrouselItemCounter: number[] = [0,0,0,0,0];
-
+  descripcionPuerta: String[][] = [
+    [],
+    []
+  ];
+  rutaPuertaActual: String = "";
+  descripcionPuertaActual: String = "";
 
   constructor() { }
 
   ngOnInit() {
-    for (let i = 0; i < this.descripciones.length; i++) {
-      if (this.descripciones[0][0] === "cabina") {
-        this.carrouselItemCounter[0] = this.carrouselItemCounter[0] + 1;
-      } else if (this.descripciones[0][0] === "techo") {
-        this.carrouselItemCounter[1] = this.carrouselItemCounter[1] + 1;
-      }else if (this.descripciones[0][0] === "pasamano") {
-        this.carrouselItemCounter[2] = this.carrouselItemCounter[2] + 1;
-      }else if (this.descripciones[0][0] === "escalera") {
-        this.carrouselItemCounter[3] = this.carrouselItemCounter[3] + 1;
-      }else if (this.descripciones[0][0] === "puerta") {
-        this.carrouselItemCounter[4] = this.carrouselItemCounter[4] + 1;
-      }
-    }
+    this.descripcionCabinaActual = this.descripcionCabina[0][0];
+    this.rutaCabinaActual = this.descripcionCabina[0][1];
   }
 
-  bodySelector(type: String, left: boolean){
-    switch (type){
-      case "cabinas":
-        if(left && this.carrouselActualPosition[0] > 0){
-          this.descripcionCabina = this.descripciones[0][0];
-        }
-        break;
-      default:
+  bodySelector(type: String, left: boolean) {
 
-        break;
-    }
   }
 
 }
