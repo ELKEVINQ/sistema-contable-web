@@ -1,7 +1,11 @@
 .body-cabinas, .body-puertas, .body-pasamanos, .body-techos, .body-escaleras{
   width: 100%;
   justify-content: space-between;
-  flex-direction: column;
+  height: 400px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
 }
 
 .cabinas, .puertas, .techos, .pasamanos, .escaleras{
@@ -16,14 +20,22 @@ h3{
   border-bottom: 2px solid #EAECEE;
 }
 
-img{
+.carousel {
   max-width: 300px;
   max-height: 600px;
-  margin-right: 20px;
-  margin-bottom: 10px;
+  overflow: hidden; /* Oculta cualquier contenido que exceda la altura máxima */
+}
+
+.carousel-item img {
+  align-self: center;
+  justify-self: center;
+  width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
+  height: auto; /* Permite que la altura se ajuste automáticamente para mantener la proporción */
 }
 
 p{
   margin-left: 20px;
-  width: 60%;
+  width: 74%;
+  text-align: justify;
+  font-size: 18px;
 }
