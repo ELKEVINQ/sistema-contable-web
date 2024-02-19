@@ -22,11 +22,12 @@ h3{
 
 .carousel {
   max-width: 300px;
-  max-height: 600px;
+  max-height: 400px;
   overflow: hidden; /* Oculta cualquier contenido que exceda la altura máxima */
 }
 
 .carousel-item img {
+  overflow: hidden;
   align-self: center;
   justify-self: center;
   width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
