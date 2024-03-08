@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class DataService {
-  private apiUrl = 'http://186.43.220.127:8081'; // Cambia esto con la URL de tu servidor backend
+
+  //url copiada 'http://186.43.220.127:8081'
+  private apiUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {}
 

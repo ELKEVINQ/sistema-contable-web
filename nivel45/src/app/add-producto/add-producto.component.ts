@@ -32,16 +32,6 @@ export class AddProductoComponent {
   }
 
   ngOnInit(): void {
-    // Agrega un "listener" para cambios en el campo precio
-    this.productoForm.get('precio')?.valueChanges.subscribe((nuevoValor) => {
-      // Multiplica por 1.12 y redondea a 3 decimales
-      const precioIva = parseFloat((nuevoValor * 1.12).toFixed(3));
-
-      // Actualiza el valor del campo precioIva
-      this.productoForm.patchValue({
-        precioIva: precioIva
-      });
-    });
   }
 
   validarEntrada(event: KeyboardEvent): void {

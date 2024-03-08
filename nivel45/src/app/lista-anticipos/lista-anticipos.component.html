@@ -21,13 +21,13 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let anticipos of anticiposPaginados; let i = index">
+    <tr *ngFor="let registros of registrosPaginados; let i = index">
       <td>{{ i + 1 }}</td>
       <td>{{ nombres }} {{ apellidos }}</td>
-      <td>{{ regular(anticipos.valor) }}</td>
-      <td>{{ regular(anticipos.gasto) }}</td>
-      <td>{{ calcularGasto(anticipos.gasto, i) }}</td>
-      <td>{{ calcularSaldo(anticipos.valor, i) }}</td>
+      <td>{{ regular(registros.valor) }}</td>
+      <td>{{ regular(registros.gasto) }}</td>
+      <td>{{ calcularGasto(registros.gasto, i) }}</td>
+      <td>{{ calcularSaldo(registros.valor, i) }}</td>
     </tr>
   </tbody>
 </table>

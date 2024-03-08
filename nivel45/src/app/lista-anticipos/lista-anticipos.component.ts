@@ -8,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./lista-anticipos.component.css']
 })
 export class ListaAnticiposComponent implements OnInit {
-  anticipos: any[] = [];
-  anticiposFiltrados: any[] = [];
+  registros: any[] = [];
+  registrosFiltrados: any[] = [];
   paginaActual = 1;
   itemsPorPagina = 10;
   nombres: string = '';
@@ -26,22 +26,22 @@ export class ListaAnticiposComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.obtenerAnticipos(this.route.snapshot.queryParams['idObra']);
+    this.obtenerRegistro(this.route.snapshot.queryParams['idObra']);
     this.nombres = this.route.snapshot.queryParams['nombres'];
     this.apellidos = this.route.snapshot.queryParams['apellidos'];
     this.totalObraOriginal = parseFloat(this.route.snapshot.queryParams['total']);
     this.totalObraActual = this.totalObraOriginal;
   }
 
-  obtenerAnticipos(idObra: any) {
-    this.registroService.obtenerAnticipos(idObra).subscribe((data: any[]) => {
-      this.anticipos = data;
+  obtenerRegistro(idObra: any) {
+    this.registroService.obtenerRegistroObra(idObra).subscribe((data: any[]) => {
+      this.registros = data;
       this.aplicarFiltros();
     });
   }
 
   aplicarFiltros() {
-    this.anticiposFiltrados = this.anticipos;
+    this.registrosFiltrados = this.registros;
     this.paginaActual = 1;
   }
 
@@ -50,17 +50,17 @@ export class ListaAnticiposComponent implements OnInit {
   }
 
   get paginasTotales() {
-    return Math.ceil(this.anticiposFiltrados.length / this.itemsPorPagina);
+    return Math.ceil(this.registrosFiltrados.length / this.itemsPorPagina);
   }
 
   get paginas() {
     return Array.from({ length: this.paginasTotales }, (_, i) => i + 1);
   }
 
-  get anticiposPaginados() {
+  get registrosPaginados() {
     const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
-    return this.anticiposFiltrados.slice(inicio, fin);
+    return this.registrosFiltrados.slice(inicio, fin);
   }
 
   calcularGasto(valorGasto: number, index: number): string {

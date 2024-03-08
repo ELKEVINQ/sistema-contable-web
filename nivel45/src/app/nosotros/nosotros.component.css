@@ -1,42 +1,21 @@
-.body-cabinas, .body-puertas, .body-pasamanos, .body-techos, .body-escaleras{
+.container-big{
+  background-color: white;
   width: 100%;
-  justify-content: space-between;
-  height: 400px;
-  display: flex;
+  justify-content: space-around;
   flex-direction: row;
   align-items: center;
+  display: flex;
   flex-grow: 1;
+  margin: 20px 10px 20px 10px;
+  border: 10px solid white;
+  border-radius: 5px;
 }
 
-.cabinas, .puertas, .techos, .pasamanos, .escaleras{
-  background-color: white;
-  margin: 20px;
-  border: 5px solid white;
-  border-radius: 10px;
+.container-left, .container-mid{
+  border: 10px solid #EAECEE;
+  background-color: #EAECEE;
+  border-radius: 5px;
+  margin: 10px;
+  width: auto;
 }
 
-h3{
-  text-align: center;
-  border-bottom: 2px solid #EAECEE;
-}
-
-.carousel {
-  max-width: 300px;
-  max-height: 400px;
-  overflow: hidden; /* Oculta cualquier contenido que exceda la altura máxima */
-}
-
-.carousel-item img {
-  overflow: hidden;
-  align-self: center;
-  justify-self: center;
-  width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
-  height: auto; /* Permite que la altura se ajuste automáticamente para mantener la proporción */
-}
-
-p{
-  margin-left: 20px;
-  width: 74%;
-  text-align: justify;
-  font-size: 18px;
-}

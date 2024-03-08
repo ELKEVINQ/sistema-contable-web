@@ -1,0 +1,38 @@
+.map{
+  width: 100%;
+  height: 200px;
+}
+
+.main{
+  margin-top: 10px;
+  background-color: white;
+}
+
+.mid{
+  width: 100%;
+  justify-content: space-around;
+  flex-direction: row;
+  align-items: center;
+  display: flex;
+}
+
+.info{
+  width: 40%;
+}
+
+.contact{
+  width: 60%;
+}
+
+.nombre, .mensaje, .email, .telefono{
+  flex-direction: column;
+  align-items: start;
+  display: flex;
+}
+
+.contacto{
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  display: flex;
+}

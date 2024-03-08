@@ -7,7 +7,9 @@ import { producto } from '../../interfaces/producto';
   providedIn: 'root'
 })
 export class ProductoService {
-  private apiUrl = 'http://186.43.220.127:8081';
+
+  //url copiada 'http://186.43.220.127:8081'
+  private apiUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
 

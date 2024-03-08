@@ -51,6 +51,8 @@ export class FacturarComponent {
 
   private destroy$: Subject<void> = new Subject<void>();
 
+  idFactura: String = ""
+
   constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService, private obraService: ObraService, private router: Router) { }
 
   ngOnInit(): void {
@@ -97,6 +99,8 @@ export class FacturarComponent {
         this.actualizarPrecioF();
       }
     });
+
+    this.obteneridFactura()
   }
 
   ngOnDestroy(): void {
@@ -104,22 +108,28 @@ export class FacturarComponent {
     this.destroy$.complete();
   }
 
+  obteneridFactura() {
+    this.facturaService.obtenerIdFactura().subscribe((data: any[]) => {
+      this.idFactura = data[0];
+    });
+  }
+
   toogleObra() {
-    if (this.facturaForm.get('cedula')?.value.length < 10){
+    if (this.facturaForm.get('cedula')?.value.length < 10) {
       this.perteneceObra = false;
       this.facturaForm.get('perteneceObra')?.setValue(this.perteneceObra);
       return;
-    }else{
+    } else {
       this.perteneceObra = !this.perteneceObra;
       this.facturaForm.get('perteneceObra')?.setValue(this.perteneceObra);
     }
   }
 
   abrirListaObras(cedula: any) {
-    if (cedula === ""){
+    if (cedula === "") {
       console.log("regreso")
       return
-    }else{
+    } else {
       this.obraService.obtenerObrasCedula(cedula).subscribe((data: any[]) => {
         // Filtrar las obras con estado "En Proceso"
         const obrasEnProceso = data.filter(obra => obra.estado === 'En Proceso');
@@ -140,10 +150,7 @@ export class FacturarComponent {
   actualizarTotalFactura(valorPorSumar: number) {
     this.subTotalFactura = this.subTotalFactura + valorPorSumar;
     this.subTotalFactura = parseFloat(this.subTotalFactura.toFixed(2));
-    this.ivaFactura = this.subTotalFactura * 0.12;
-    this.ivaFactura = parseFloat(this.ivaFactura.toFixed(2));
-    this.totalFactura = this.subTotalFactura + (this.ivaFactura);
-    this.totalFactura = parseFloat(this.totalFactura.toFixed(2));
+    this.totalFactura = this.subTotalFactura;
   }
 
   actualizarPrecioT() {
@@ -346,6 +353,32 @@ export class FacturarComponent {
     }
   }
 
+  idFacturaNoCeros(cadena: String): String {
+    // Encontrar el índice del último '-' desde la derecha
+    const indice = cadena.lastIndexOf('-');
+
+    // Si no se encuentra '-' o está al final, retorna null
+    if (indice === -1 || indice === cadena.length - 1) {
+      return "";
+    }
+
+    // Extraer la subcadena desde el último '-' hasta el final
+    const subcadena = cadena.substring(indice + 1);
+
+    return subcadena;
+  }
+
+  igualarCeros(): String {
+    var idEntero: String = this.idFacturaNoCeros(this.idFactura)
+    var idString: String = ""
+    if (idEntero.length < 9) {
+      for (let i = 9; i > idEntero.length; i--) {
+        idString = "0" + idEntero
+      }
+    }
+    console.log(idString)
+    return idString;
+  }
   checkBeforeSend(): boolean {
     if (this.facturaForm.get("cedula")?.value !== '' && this.facturaForm.get("nombres")?.value !== '' && this.facturaForm.get("fecha")?.value !== ''
       && this.productosTabla.length > 0) {
@@ -371,11 +404,11 @@ export class FacturarComponent {
 
       // Crear el objeto de factura
       const facturaData = {
-        idFactura: '0000-0000-0005',
+        idFactura: this.igualarCeros(),
         cedula,
         fecha: fechaFormateada,
         subtotal: this.subTotalFactura,
-        iva: this.ivaFactura,
+        iva: 0,
         descuento: this.descuentoFactura,
         total: this.totalFactura,
         estado: "Valida",

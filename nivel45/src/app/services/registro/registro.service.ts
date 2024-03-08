@@ -6,7 +6,9 @@ import { Observable, catchError } from 'rxjs';
   providedIn: 'root'
 })
 export class RegistroService {
-  private apiUrl = 'http://186.43.220.127:8081';
+
+  //url copiada 'http://186.43.220.127:8081'
+  private apiUrl = 'http://localhost:3000';
 
   //Constructor
   constructor(private http: HttpClient) { }
@@ -73,6 +75,11 @@ export class RegistroService {
 
   obtenerAnticipos(idObra: string): Observable<any[]> {
     const url = `${this.apiUrl}/obtener-anticipos/${idObra}`;
+    return this.http.get<any[]>(url);
+  }
+
+  obtenerRegistroObra(idObra: string): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-registro-obra/${idObra}`;
     return this.http.get<any[]>(url);
   }
 }

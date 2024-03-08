@@ -27,8 +27,7 @@
               <th scope="col">Existencias</th>
               <th scope="col">Nombre del Producto</th>
               <th scope="col">Proveedor</th>
-              <th scope="col">Precio sin Iva</th>
-              <th scope="col">Precio con Iva</th>
+              <th scope="col">Precio</th>
               <th scope="col">Acciones</th>
               <!-- Agrega aquí más columnas según tus necesidades -->
           </tr>
@@ -45,7 +44,6 @@
               <td>{{ producto.nombre}}</td>
               <td>{{ producto.proveedor }}</td>
               <td>{{ producto.precio }}</td>
-              <td>{{ calcularPrecioIva(producto.precio) }}</td>
               <td>
                   <span class="actions1" (click)="addExistencias(producto)">
                       <i class="fa fa-plus"></i>Añadir Existencias </span>
@@ -91,7 +89,7 @@
                       <h5 class="card-titte">Imprimir QR</h5>
                   </div>
                   <div class="row input-group input-group-sm mb-1">
-                      <input type="text" class="form-control" placeholder="Cantidad" aria-label="Cantidad" aria-describedby="addon-wrapping" [(ngModel)]="cantidad">
+                      <input type="text" class="form-control" placeholder="Cantidad" aria-label="Cantidad" aria-describedby="addon-wrapping">
                   </div>
                   <div class="row mb-1">
                       <a (click)="imprimirQr()" (click)="cerrarModal()" class="btn bg-primary btn-sm">Imprimir</a>

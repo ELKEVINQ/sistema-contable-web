@@ -5,7 +5,7 @@ const cors = require('cors');
 const { error } = require('console');
 
 const app = express();
-const port = 8081;
+const port = 3000;
 
 // Configuración de la conexión a MySQL
 const db = mysql.createConnection({
@@ -28,13 +28,6 @@ db.connect((err) => {
     } else {
         console.log('Conexión exitosa a MySQL');
     }
-});
-
-// Permitir acceso desde cualquier origen (CORS)
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
 });
 
 // Ruta para la autenticación
@@ -177,7 +170,7 @@ app.get('/obtener-anticipos/:idObra', (req, res) => {
     const idObra = req.params.idObra;
 
     const consulta = `
-        SELECT 
+        SELECT
             anticipo.valor AS valor,
             NULL AS gasto,
             obras.total AS totalObra
@@ -187,7 +180,7 @@ app.get('/obtener-anticipos/:idObra', (req, res) => {
 
         UNION
 
-        SELECT 
+        SELECT
             NULL AS valor,
             gastos.valor AS gasto,
             obras.total AS totalObra
@@ -362,6 +355,45 @@ app.get('/obtener-registros', (req, res) => {
             const registrosFormateados = resultados.map(registro => ({
                 ...registro,
                 fecha: formatarFecha(registro.fecha),
+            }));
+
+            console.log(registrosFormateados);
+            res.json(registrosFormateados);
+        }
+    });
+});
+
+// Ruta para obtener los registros de gasto y anticipo de una obra específica
+app.get('/obtener-registro-obra/:idObra', (req, res) => {
+    const idObra = req.params.idObra;
+
+    const consulta = `
+    SELECT
+    registro.idRegistro,
+    registro.idGasto,
+    registro.idAnticipo,
+    gastos.valor AS gasto,
+    anticipo.valor AS valor
+FROM 
+    registro
+LEFT JOIN 
+    gastos ON registro.idGasto = gastos.idGasto AND gastos.idObra = ?
+LEFT JOIN 
+    anticipo ON registro.idAnticipo = anticipo.idAnticipo AND anticipo.idObra = ?
+WHERE
+    (registro.idGasto IS NOT NULL OR registro.idAnticipo IS NOT NULL) AND
+    (gastos.valor IS NOT NULL OR anticipo.valor IS NOT NULL);
+    `;
+
+    db.query(consulta, [idObra, idObra], (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener los registros de gastos y anticipos', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            // Formatear los resultados antes de enviarlos como respuesta
+            const registrosFormateados = resultados.map(registro => ({
+                gasto: registro.gasto,
+                valor: registro.valor
             }));
 
             console.log(registrosFormateados);
@@ -630,8 +662,8 @@ app.post('/insertar-empleado', (req, res) => {
 //Ruta para obtener empleados
 app.get('/obtener-empleados', (req, res) => {
     const consulta = `
-        SELECT 
-        empleado.*, 
+        SELECT
+        empleado.*,
         CONCAT(persona.nombres, ' ', persona.apellidos) AS nombres
         FROM empleado
         JOIN persona ON empleado.cedula = persona.cedula
@@ -654,8 +686,8 @@ app.get('/obtener-empleado/:cedula', (req, res) => {
     const cedula = req.params.cedula;
 
     const consulta = `
-        SELECT 
-        empleado.*, 
+        SELECT
+        empleado.*,
         CONCAT(persona.nombres, ' ', persona.apellidos) AS nombres
         FROM empleado
         JOIN persona ON empleado.cedula = persona.cedula WHERE cedula = ?
@@ -764,6 +796,21 @@ app.get('/obtener-facturas', (req, res) => {
     db.query(consulta, (error, resultados) => {
         if (error) {
             console.error('Error al obtener la lista de facturas:', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            console.log(resultados);
+            res.json(resultados);
+        }
+    });
+});
+
+app.get('/obtener-idFactura', (req, res) => {
+    const consulta = `
+    SELECT MAX(idFactura) AS idFactura FROM factura;
+    `;
+    db.query(consulta, (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener el ultimo index:', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
         } else {
             console.log(resultados);
@@ -893,6 +940,11 @@ function formatarFecha(fecha) {
     return `${año}/${mes}/${dia}`;
 }
 
+/*
 app.listen(port, '0.0.0.0', () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
+});
+*/ 
+app.listen(port, () => {
+  console.log(`Servidor escuchando en el puerto ${port}`);
 });
