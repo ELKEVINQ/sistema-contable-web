@@ -51,7 +51,7 @@ export class FacturarComponent {
 
   private destroy$: Subject<void> = new Subject<void>();
 
-  idFactura: String = ""
+  idFactura: string = ""
 
   constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService, private obraService: ObraService, private router: Router) { }
 
@@ -110,7 +110,9 @@ export class FacturarComponent {
 
   obteneridFactura() {
     this.facturaService.obtenerIdFactura().subscribe((data: any[]) => {
-      this.idFactura = data[0];
+      this.idFactura = data[0].idFactura;
+      this.idFactura = this.idFacturaNoCeros(this.idFactura).toString()
+      this.igualarCeros()
     });
   }
 
@@ -369,16 +371,16 @@ export class FacturarComponent {
   }
 
   igualarCeros(): String {
-    var idEntero: String = this.idFacturaNoCeros(this.idFactura)
-    var idString: String = ""
-    if (idEntero.length < 9) {
-      for (let i = 9; i > idEntero.length; i--) {
-        idString = "0" + idEntero
+    var idEntero: Number = parseInt(this.idFactura)+1;
+    var idString: String = (idEntero+"")
+    if (idString.length < 9) {
+      for (let i = idString.length; i < 9; i++) {
+        idString = "0" + idString
       }
     }
-    console.log(idString)
     return idString;
   }
+
   checkBeforeSend(): boolean {
     if (this.facturaForm.get("cedula")?.value !== '' && this.facturaForm.get("nombres")?.value !== '' && this.facturaForm.get("fecha")?.value !== ''
       && this.productosTabla.length > 0) {
@@ -404,7 +406,7 @@ export class FacturarComponent {
 
       // Crear el objeto de factura
       const facturaData = {
-        idFactura: this.igualarCeros(),
+        idFactura: "000-000-"+this.igualarCeros(),
         cedula,
         fecha: fechaFormateada,
         subtotal: this.subTotalFactura,

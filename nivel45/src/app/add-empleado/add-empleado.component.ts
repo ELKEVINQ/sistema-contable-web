@@ -43,7 +43,7 @@ export class AddEmpleadoComponent {
         // Filtrar el cliente por la cédula
         const cliente = data;
 
-        this.empleadoForm.get('nombres')?.setValue(cliente.nombres + " " + cliente.apellidos);
+        this.empleadoForm.get('nombres')?.setValue(cliente[0].nombres + " " + cliente[0].apellidos);
       });
     }else {
       this.empleadoForm.get('nombres')?.setValue('');

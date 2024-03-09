@@ -765,6 +765,18 @@ app.post('/insertar-factura', (req, res) => {
         } else {
             console.log('Factura insertada correctamente');
 
+            if (factura.idObra != null) {
+                const finalObraConsulta = 'UPDATE obras SET estado="Completado" WHERE idObra= ?'
+                db.query(finalObraConsulta, [factura.idObra], (error, resultados) => {
+                    if (error) {
+                        console.error('Error en la inserción de la factura:', error);
+                        res.json({ success: false });
+                    } else {
+                        console.log('Obra Modificada Correctamente');
+                    }
+                });
+            }
+
             // Ahora insertamos los detalles de la factura
             const detallesConsulta = 'INSERT INTO `detallefactura`(`idFactura`, `numero`, `cantidad`, `descripcion`, `precioTotal`) VALUES (?, ?, ?, ?, ?)';
 
@@ -944,7 +956,7 @@ function formatarFecha(fecha) {
 app.listen(port, '0.0.0.0', () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
 });
-*/ 
+*/
 app.listen(port, () => {
-  console.log(`Servidor escuchando en el puerto ${port}`);
+    console.log(`Servidor escuchando en el puerto ${port}`);
 });
