@@ -35,6 +35,10 @@ import { EditarClienteComponent } from './editar-cliente/editar-cliente.componen
 import { EditarProveedorComponent } from './editar-proveedor/editar-proveedor.component';
 import { ContactoComponent } from './contacto/contacto.component';
 import { ListaRolesComponent } from './lista-roles/lista-roles.component';
+import { AddDeudaComponent } from './add-deuda/add-deuda.component';
+import { PagarDeudaComponent } from './pagar-deuda/pagar-deuda.component';
+import { ListaDeudaComponent } from './lista-deuda/lista-deuda.component';
+import { ListaMovimientosComponent } from './lista-movimientos/lista-movimientos.component';
 
 
 @NgModule({
@@ -68,6 +72,10 @@ import { ListaRolesComponent } from './lista-roles/lista-roles.component';
     EditarClienteComponent,
     EditarProveedorComponent,
     ListaRolesComponent,
+    AddDeudaComponent,
+    PagarDeudaComponent,
+    ListaDeudaComponent,
+    ListaMovimientosComponent,
   ],
   imports: [
     BrowserModule,

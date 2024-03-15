@@ -1,0 +1,19 @@
+
+th:nth-child(1) {
+  width: 5%; /* Ancho de la primera columna */
+}
+th:nth-child(2) {
+  width: 10%; /* Ancho de la segunda columna */
+}
+th:nth-child(3) {
+  width: 70%; /* Ancho de la tercera columna */
+}
+th:nth-child(4) {
+  width: 5%; /* Ancho de la primera columna */
+}
+th:nth-child(5) {
+  width: 5%; /* Ancho de la segunda columna */
+}
+th:nth-child(6) {
+  width: 5%; /* Ancho de la tercera columna */
+}

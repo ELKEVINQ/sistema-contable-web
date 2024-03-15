@@ -24,17 +24,6 @@ export class RegistroService {
       );
   }
 
-  insertarSaldo(saldoData: any) {
-    const url = `${this.apiUrl}/insertar-saldo`;
-    return this.http.post<any>(url, saldoData)
-      .pipe(
-        catchError((error) => {
-          console.error('Error en la solicitud HTTP:', error);
-          throw error; // Propaga el error para que otros puedan manejarlo
-        })
-      );
-  }
-
   insertarGasto(gastoData: any) {
     const url = `${this.apiUrl}/insertar-gasto`;
     return this.http.post<any>(url, gastoData)
@@ -57,9 +46,42 @@ export class RegistroService {
       );
   }
 
+  insertarDeuda(deudaData: any) {
+    const url = `${this.apiUrl}/insertar-deuda`;
+    return this.http.post<any>(url, deudaData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
+  insertarMovimiento(movimientoData: any) {
+    const url = `${this.apiUrl}/insertar-movimiento`;
+    return this.http.post<any>(url, movimientoData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
   insertarRegistro(registroData: any) {
     const url = `${this.apiUrl}/insertar-gasto`;
     return this.http.post<any>(url, registroData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
+  pagarDeuda(deudaData: any) {
+    const url = `${this.apiUrl}/insertar-gasto`;
+    return this.http.post<any>(url, deudaData)
       .pipe(
         catchError((error) => {
           console.error('Error en la solicitud HTTP:', error);
@@ -80,6 +102,16 @@ export class RegistroService {
 
   obtenerRegistroObra(idObra: string): Observable<any[]> {
     const url = `${this.apiUrl}/obtener-registro-obra/${idObra}`;
+    return this.http.get<any[]>(url);
+  }
+
+  obtenerDeudas(): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-deudas`;
+    return this.http.get<any[]>(url);
+  }
+
+  obtenerMovimientos(idDeuda: any): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-movimientos/${idDeuda}`;
     return this.http.get<any[]>(url);
   }
 }

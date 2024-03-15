@@ -27,6 +27,9 @@ import { EditarClienteComponent } from './editar-cliente/editar-cliente.componen
 import { EditarProveedorComponent } from './editar-proveedor/editar-proveedor.component';
 import { ContactoComponent } from './contacto/contacto.component';
 import { ListaRolesComponent } from './lista-roles/lista-roles.component';
+import { AddDeudaComponent } from './add-deuda/add-deuda.component';
+import { ListaDeudaComponent } from './lista-deuda/lista-deuda.component';
+import { PagarDeudaComponent } from './pagar-deuda/pagar-deuda.component';
 
 const routes: Routes = [
   { path: 'inicio', component: InicioComponent },
@@ -40,6 +43,7 @@ const routes: Routes = [
     children: [
       { path: 'add-anticipo', component: AddAnticipoComponent },
       { path: 'add-cliente', component: AddClienteComponent },
+      { path: 'add-deuda', component: AddDeudaComponent },
       { path: 'add-obra', component: AddObraComponent },
       { path: 'add-producto', component: AddProductoComponent },
       { path: 'add-proveedor', component: AddProveedorComponent },
@@ -48,6 +52,7 @@ const routes: Routes = [
       { path: 'editar-proveedor', component: EditarProveedorComponent },
       { path: 'facturar', component: FacturarComponent },
       { path: 'lista-anticipos', component: ListaAnticiposComponent },
+      { path: 'lista-deuda', component: ListaDeudaComponent },
       { path: 'lista-empleados', component: ListaEmpleadosComponent },
       { path: 'lista-clientes', component: ListaClientesComponent },
       { path: 'lista-facturas', component: ListaFacturasComponent },
@@ -58,6 +63,7 @@ const routes: Routes = [
       { path: 'registrar-compra', component: RegistrarCompraComponent },
       { path: 'registrar-factura-compra', component: RegistrarFacturaCompraComponent },
       { path: 'registro-general', component: RegistroGeneralComponent },
+      { path: 'pagar-deuda', component: PagarDeudaComponent },
       { path: 'pagar-rol', component: PagarRolComponent },
     ]
   },

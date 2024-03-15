@@ -60,6 +60,24 @@ export class EmpleadoService {
       );
   }
 
+  obtenerAnticiposEmpleadoFechado(idEmpleado: any, fechaInicio: any, fechaPago: any): Observable<any[]> {
+    const url = `${this.apiUrl}/obtener-anticipos-empleado`;
+
+    // Agrega los parámetros a la URL
+    const params = new HttpParams()
+      .set('idEmpleado', idEmpleado.toString())
+      .set('fechaInicio', fechaInicio)
+      .set('fechaPago', fechaPago);
+
+    return this.http.get<any[]>(url, { params })
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
   modificarEstadoEmpleado(empleadoData: any): Observable<any> {
     const url = `${this.apiUrl}/modificar-estado-empleado`;
     return this.http.post<any>(url, empleadoData)
@@ -101,7 +119,7 @@ export class EmpleadoService {
     observaciones: any,
     cedula: any, dias: any,
     anticiposSumados: any,
-    esSoloImpreso: boolean,
+    esSoloImpreso: boolean, anticipos: any[]
     ) {
     // Espera 1 segundo antes de continuar
     setTimeout(() => {
@@ -123,6 +141,17 @@ export class EmpleadoService {
         necesitaPagar = valor;
         anticiposPagados = anticiposSumados;
         cantidadRecibida = valor - anticiposSumados;
+      }
+
+      const body = [];
+      body.push(['N°', 'fecha', 'valor'])
+
+      for (let i = 0; i > anticipos.length; i++){
+        body.push([
+          i,
+          this.formatearFecha(anticipos[i].fecha),
+          anticipos[i].valor
+        ]);
       }
 
       const documentDefinition: any = {
@@ -187,7 +216,17 @@ export class EmpleadoService {
               ]
             }
           },
+          //anticipos
+          { text: 'Tabla de anticipos' },
+          {
+            table: {
+              headerRows: 1,
+              widths: ['10%', '*', '10%',],
+              body: body,
+            }
+          },
           //Detalle del pago
+          { text: 'Tabla de pagos' },
           {
             table: {
               headerRows: 1,

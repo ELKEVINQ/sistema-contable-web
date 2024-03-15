@@ -8,6 +8,7 @@ import { Subject, of } from 'rxjs';
 import { ObraService } from '../services/obras/obras.service';
 import { ProductoTabla } from '../interfaces/ProductoTabla';
 import { Router } from '@angular/router';
+import { RegistroService } from '../services/registro/registro.service';
 
 @Component({
   selector: 'app-facturar',
@@ -26,6 +27,7 @@ export class FacturarComponent {
 
   idObra: string = '';
   obras: any[] = [];
+  valorAnticipos: number = 0;
   perteneceObra: boolean = false;
 
   mostrarDropdown = false;
@@ -53,7 +55,7 @@ export class FacturarComponent {
 
   idFactura: string = ""
 
-  constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService, private obraService: ObraService, private router: Router) { }
+  constructor(private fb: FormBuilder, private facturaService: FacturaService, private clienteService: ClienteService, private productoService: ProductoService, private obraService: ObraService, private registroService: RegistroService, private router: Router) { }
 
   ngOnInit(): void {
     this.productoService.obtenerProductos().subscribe((data: any[]) => {
@@ -331,7 +333,7 @@ export class FacturarComponent {
   }
 
   onInputChange() {
-    if (this.facturaForm.get('cedula')?.value.length === 10) {
+    if (this.facturaForm.get('cedula')?.value.length === 10 || this.facturaForm.get('cedula')?.value.length === 13) {
       this.cedula = this.facturaForm.get('cedula')?.value;
       this.clienteService.obtenerCliente(this.cedula).subscribe((data: any) => {
         // Filtrar el cliente por la cédula
@@ -371,8 +373,8 @@ export class FacturarComponent {
   }
 
   igualarCeros(): String {
-    var idEntero: Number = parseInt(this.idFactura)+1;
-    var idString: String = (idEntero+"")
+    var idEntero: Number = parseInt(this.idFactura) + 1;
+    var idString: String = (idEntero + "")
     if (idString.length < 9) {
       for (let i = idString.length; i < 9; i++) {
         idString = "0" + idString
@@ -404,9 +406,19 @@ export class FacturarComponent {
       // Formatear la fecha a un formato compatible con MySQL
       const fechaFormateada = this.formatToMySQLDate(fecha);
 
+      let valor = 0
+
+      if (this.idObra !=""){
+        valor = this.calcularSaldo(this.idObra, this.totalFactura)
+      }else{
+        valor = this.totalFactura
+      }
+
+      console.log(valor)
+
       // Crear el objeto de factura
       const facturaData = {
-        idFactura: "000-000-"+this.igualarCeros(),
+        idFactura: "000-000-" + this.igualarCeros(),
         cedula,
         fecha: fechaFormateada,
         subtotal: this.subTotalFactura,
@@ -415,6 +427,7 @@ export class FacturarComponent {
         total: this.totalFactura,
         estado: "Valida",
         idObra: this.idObra,
+        valor: valor
         // Agrega aquí los demás campos necesarios para la factura
       };
 
@@ -432,5 +445,19 @@ export class FacturarComponent {
     } else {
       alert('Alguno de los campos está vacío');
     }
+  }
+
+  calcularSaldo(idObra: string, valorFactura: number): number {
+    this.registroService.obtenerAnticipos(idObra).subscribe((data: any[]) => {
+      let anticipos: any[] = data
+      for (let i = 0; i < anticipos.length; i++) {
+        this.valorAnticipos += parseFloat(anticipos[i].valor)
+      }
+      this.valorAnticipos -= valorFactura
+      return this.valorAnticipos
+    }, (error) => {
+      console.error("Error al obtener anticipos:", error);
+    });
+    return this.valorAnticipos
   }
 }

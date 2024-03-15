@@ -19,12 +19,13 @@ export class ListaRolesComponent {
   idEmpleado: any;
   cedula: any;
   nombres: any;
+  anticipos: any[] = [];
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private empleadoService: EmpleadoService, private router: Router) {
     this.filtroForm = this.fb.group({
-    tipoBusqueda: ['cedula'],
-    valorBusqueda: ['']
-  });
+      tipoBusqueda: ['cedula'],
+      valorBusqueda: ['']
+    });
   }
 
   formatearFecha(str: string) {
@@ -33,9 +34,6 @@ export class ListaRolesComponent {
     } else {
       return str;
     }
-  }
-
-  imprimirRol(empleado: any) {
   }
 
   formatToMySQLDate(date: Date) {
@@ -65,6 +63,27 @@ export class ListaRolesComponent {
     this.empleadoService.obtenerRolesEmpleado(this.idEmpleado).subscribe((data: any[]) => {
       this.roles = data;
     });
+  }
+
+  imprimirRol(rol: any) {
+    this.empleadoService.obtenerAnticiposEmpleadoFechado(this.idEmpleado, rol.fechaInicio, rol.fechaPago).subscribe((data: any[]) => {
+      this.anticipos = data;
+    });
+    let anticiposSumados = 0; // Reinicia el total antes de sumar
+
+    for (let i = 0; i < this.anticipos.length; i++) {
+      anticiposSumados += this.anticipos[i].valor;
+    }
+    const fechaInicio = new Date(rol.fechaInicio);
+    const fechaPago = new Date(rol.fechaPago);
+
+    // Calcula la diferencia en milisegundos entre las fechas
+    const diffMilliseconds = fechaPago.getTime() - fechaInicio.getTime();
+
+    // Convierte la diferencia en días
+    const dias = Math.floor(diffMilliseconds / (24 * 60 * 60 * 1000));
+    console.log("Diferencia en días:", dias);
+    this.empleadoService.imprimirRol(this.nombres, rol.valor, this.formatearFecha(rol.fechaInicio), this.formatearFecha(rol.fechaPago), rol.observaciones, this.cedula, dias, anticiposSumados, false, this.anticipos);
   }
 
   onPageChange(event: number) {

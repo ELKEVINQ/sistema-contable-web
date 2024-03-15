@@ -128,7 +128,130 @@ app.get('/obtener-cliente/:cedula', (req, res) => {
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
         } else {
             // Envia los resultados como respuesta (puede ser un array, incluso si esperas un solo resultado)
+            console.log(resultados)
             res.json(resultados);
+        }
+    });
+});
+
+// Ruta para la inserción de deudas
+app.post('/insertar-deuda', (req, res) => {
+    const { descripcion, propietario, valor, fechaInicio, prestamo } = req.body;
+
+    // Consulta SQL para la inserción en anticipo
+    const insertarAnticipoQuery = 'INSERT INTO deudas (descripcion, propietario, valor, fechaInicio, prestamo) VALUES (?, ?, ?, ?, ?)';
+
+    // Ejecuta la consulta para insertar en anticipo
+    db.query(insertarAnticipoQuery, [descripcion, propietario, valor, fechaInicio, prestamo], (error, resultados) => {
+        if (error) {
+            console.error('Error en la inserción de deuda:', error);
+            res.json({ success: false });
+        } else {
+            console.log('Deuda insertada correctamente', resultados);
+
+            // Obtener el último ID insertado
+            const idDeuda = resultados.insertId;
+
+            if (prestamo === true) {
+                // Llamar a la función para insertar en registro
+                insertarRegistro('idDeuda', fechaInicio, descripcion, valor, idDeuda, true, (errorRegistro, resultadosRegistro) => {
+                    if (errorRegistro) {
+                        console.error('Error al insertar en registro:', errorRegistro);
+                        res.json({ success: false });
+                    } else {
+                        console.log('Registro insertado correctamente', resultadosRegistro);
+                        res.json({ success: true });
+                    } valor
+                });
+            }
+        }
+    });
+});
+
+// Ruta para la busqueda de deudas
+app.get('/obtener-deudas', (req, res) => {
+    const consulta = `
+        SELECT * FROM deudas`;
+
+    db.query(consulta, (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener la lista de deudas:', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            // Formatear la fecha antes de enviarla como respuesta
+            const deudasFormateadas = resultados.map(deudas => ({
+                ...deudas,
+                fechaInicio: formatarFecha(deudas.fechaInicio),
+            }));
+
+            console.log(deudasFormateadas);
+            res.json(deudasFormateadas);
+        }
+    });
+});
+
+// Ruta para la pago de deudas
+app.post('/pagar-deuda', (req, res) => {
+    const { fechaPago, valor, idDeuda, estado } = req.body;
+
+    // Consulta SQL para la inserción en anticipo
+    const insertarAnticipoQuery = 'INSERT INTO movimientosdeuda (fechaPago, valor, idDeuda) VALUES (?, ?, ?)';
+
+    // Ejecuta la consulta para insertar en anticipo
+    db.query(insertarAnticipoQuery, [fechaPago, valor, idDeuda], (error, resultados) => {
+        if (error) {
+            console.error('Error en la inserción del pago:', error);
+            res.json({ success: false });
+        } else {
+            console.log('Pago insertado correctamente', resultados);
+
+            if (estado == 'Pagado') {
+                const cambiarEstadoQuery = 'Update deudas SET estado = ? WHERE idDeuda = ?'
+
+                db.query(cambiarEstadoQuery, [estado, idDeuda], (err, res) => {
+                    if (error) {
+                        console.error('Error en la modificacion del estado:', error);
+                        res.json({ success: false })
+                    }else {
+                        console.log('Deuda pagada correctamente', resultados);
+                    }
+                })
+            }
+
+            // Llamar a la función para insertar en registro
+            insertarRegistro('idDeuda', fechaInicio, descripcion, valor, idDeuda, false, (errorRegistro, resultadosRegistro) => {
+                if (errorRegistro) {
+                    console.error('Error al insertar en registro:', errorRegistro);
+                    res.json({ success: false });
+                } else {
+                    console.log('Registro insertado correctamente', resultadosRegistro);
+                    res.json({ success: true });
+                } valor
+            });
+        }
+    });
+});
+
+// Ruta para la busqueda de movimientos de deudas
+app.get('/obtener-movimientos/idDeuda', (req, res) => {
+    const idDeuda = req.params.cedula;
+    const consulta = `
+        SELECT * FROM movimientos WHERE idDeuda = ?
+        `;
+
+    db.query(consulta, [idDeuda], (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener la lista de movimientos:', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            // Formatear la fecha antes de enviarla como respuesta
+            const data = resultados.map(movimientos => ({
+                ...movimientos,
+                fechaPago: formatarFecha(deudas.fechaPago),
+            }));
+
+            console.log(data);
+            res.json(data);
         }
     });
 });
@@ -152,7 +275,7 @@ app.post('/insertar-anticipo', (req, res) => {
             const idAnticipo = resultados.insertId;
 
             // Llamar a la función para insertar en registro
-            insertarRegistro('idAnticipo', fecha, descripcion, valor, idAnticipo, (errorRegistro, resultadosRegistro) => {
+            insertarRegistro('idAnticipo', fecha, descripcion, valor, idAnticipo, null, (errorRegistro, resultadosRegistro) => {
                 if (errorRegistro) {
                     console.error('Error al insertar en registro:', errorRegistro);
                     res.json({ success: false });
@@ -219,7 +342,7 @@ app.post('/insertar-rol', (req, res) => {
             const idRol = resultados.insertId;
 
             // Llamar a la función para insertar en registro
-            insertarRegistro('idRol', fechaPago, descripcion, valor, idRol, (errorRegistro, resultadosRegistro) => {
+            insertarRegistro('idRol', fechaPago, descripcion, valor, idRol, null, (errorRegistro, resultadosRegistro) => {
                 if (errorRegistro) {
                     console.error('Error al insertar en registro:', errorRegistro);
                     res.json({ success: false });
@@ -332,18 +455,21 @@ app.get('/obtener-registros', (req, res) => {
     const consulta = `
     SELECT
     registro.*,
-    TRUNCATE(COALESCE(saldo.valor, anticipo.valor, gastos.valor, roldepago.valor), 2) AS valor,
+    TRUNCATE(COALESCE(saldo.valor, anticipo.valor, gastos.valor, roldepago.valor, deudas.valor), 2) AS valor,
     CASE
         WHEN registro.idSaldo > 0 THEN 'Saldo'
         WHEN registro.idAnticipo > 0 THEN 'Anticipo'
         WHEN registro.idGasto > 0 THEN 'Gasto'
         WHEN registro.idRol > 0 THEN 'Rol de Pago'
+        WHEN registro.idDeuda > 0 THEN 'Deuda'
     END AS tipo
     FROM registro
         LEFT JOIN saldo ON registro.idSaldo = saldo.idSaldo
         LEFT JOIN anticipo ON registro.idAnticipo = anticipo.idAnticipo
         LEFT JOIN gastos ON registro.idGasto = gastos.idGasto
         LEFT JOIN roldepago ON registro.idRol = roldepago.idRol
+        LEFT JOIN deudas ON registro.idDeuda = deudas.idDeuda
+        ORDER BY fecha
     `;
 
     db.query(consulta, (error, resultados) => {
@@ -373,19 +499,21 @@ app.get('/obtener-registro-obra/:idObra', (req, res) => {
     registro.idGasto,
     registro.idAnticipo,
     gastos.valor AS gasto,
-    anticipo.valor AS valor
+    COALESCE(anticipo.valor, saldo.valor) AS valor
 FROM 
     registro
 LEFT JOIN 
     gastos ON registro.idGasto = gastos.idGasto AND gastos.idObra = ?
 LEFT JOIN 
     anticipo ON registro.idAnticipo = anticipo.idAnticipo AND anticipo.idObra = ?
+LEFT JOIN
+    saldo ON registro.idSaldo = saldo.idSaldo AND saldo.idObra = ?
 WHERE
-    (registro.idGasto IS NOT NULL OR registro.idAnticipo IS NOT NULL) AND
-    (gastos.valor IS NOT NULL OR anticipo.valor IS NOT NULL);
+    (registro.idGasto IS NOT NULL OR registro.idAnticipo IS NOT NULL OR registro.idSaldo IS NOT NULL) AND
+    (gastos.valor IS NOT NULL OR anticipo.valor IS NOT NULL OR saldo.valor IS NOT NULL);
     `;
 
-    db.query(consulta, [idObra, idObra], (error, resultados) => {
+    db.query(consulta, [idObra, idObra, idObra], (error, resultados) => {
         if (error) {
             console.error('Error al obtener los registros de gastos y anticipos', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
@@ -510,7 +638,7 @@ app.post('/insertar-factura-compra', (req, res) => {
                 } else {
                     const idGasto = resultadosGasto.insertId;
                     // Llamar a la función para insertar en registro
-                    insertarRegistro('idGasto', fecha, descripcion, valor, idGasto, (errorRegistro, resultadosRegistro) => {
+                    insertarRegistro('idGasto', fecha, descripcion, valor, idGasto, null, (errorRegistro, resultadosRegistro) => {
                         if (errorRegistro) {
                             console.error('Error al insertar en registro:', errorRegistro);
                             res.json({ success: false });
@@ -542,7 +670,7 @@ app.post('/insertar-gasto', (req, res) => {
             res.json({ success: false });
         } else {
             // Llamar a la función para insertar en registro
-            insertarRegistro('idGasto', fecha, descripcion, valor, resultados.insertId, (errorRegistro, resultadosRegistro) => {
+            insertarRegistro('idGasto', fecha, descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
                 if (errorRegistro) {
                     console.error('Error al insertar en registro:', errorRegistro);
                     res.json({ success: false });
@@ -640,15 +768,15 @@ app.post('/modificar-precio-producto', (req, res) => {
 
 // Ruta para la insercion de empleados
 app.post('/insertar-empleado', (req, res) => {
-    const { cedula, fecha_entrada, sueldo } = req.body;
+    const { cedula, fecha_entrada, sueldo, estado } = req.body;
 
     // Consulta SQL para la inserción
-    const consulta = 'INSERT INTO `empleado` (`cedula`, `fecha_entrada`, `sueldo`) VALUES (?, ?, ?)';
+    const consulta = 'INSERT INTO empleado (cedula, fecha_entrada, sueldo, estado) VALUES (?, ?, ?, ?)';
 
     console.log('Consulta SQL:', consulta);
 
     // Ejecuta la consulta con los datos proporcionados
-    db.query(consulta, [cedula, fecha_entrada, sueldo], (error, resultados) => {
+    db.query(consulta, [cedula, fecha_entrada, sueldo, estado], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción del empleado:', error);
             res.json({ success: false });
@@ -777,6 +905,15 @@ app.post('/insertar-factura', (req, res) => {
                 });
             }
 
+            ingresarSaldo(factura.idObra, factura.idFactura, factura.valor, factura.fecha, "Factura de venta", (errorRegistro, resultadosRegistro) => {
+                if (errorRegistro) {
+                    console.error('Error al insertar en registro:', errorRegistro);
+                    res.json({ success: false });
+                } else {
+                    console.log('Registro insertado correctamente', resultadosRegistro);
+                }
+            });
+
             // Ahora insertamos los detalles de la factura
             const detallesConsulta = 'INSERT INTO `detallefactura`(`idFactura`, `numero`, `cantidad`, `descripcion`, `precioTotal`) VALUES (?, ?, ?, ?, ?)';
 
@@ -792,12 +929,52 @@ app.post('/insertar-factura', (req, res) => {
                     }
                 });
             });
-
-
             res.json({ success: true });
         }
     });
 });
+
+function ingresarSaldo(idObra, idFactura, valor, fecha, descripcion, callback) {
+    if (idObra != "" || idObra != null) {
+        const consulta = `INSERT INTO saldo(idObra, idFactura, valor) VALUES (?, ?, ?)`
+        db.query(consulta, [idObra, idFactura, valor], (error, resultados) => {
+            if (error) {
+                console.error('Error al ingresar el saldo');
+                res.status(500).json({ success: false, error: 'Error interno del servidor' });
+            } else {
+                console.log("Ingresando el registro de saldo: " + resultados.insertId)
+                insertarRegistro('idSaldo', fecha, descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
+                    if (errorRegistro) {
+                        console.error('Error al insertar en registro:', errorRegistro);
+                        res.json({ success: false });
+                    } else {
+                        console.log('Registro insertado correctamente', resultadosRegistro);
+                    }
+                });
+                console.log(resultados);
+            }
+        })
+    } else {
+        const consulta = `INSERT INTO saldo(idFactura, valor) VALUES (?, ?)`
+        db.query(consulta, [idFactura, valor], (error, resultados) => {
+            if (error) {
+                console.error('Error al ingresar el saldo');
+                res.status(500).json({ success: false, error: 'Error interno del servidor' });
+            } else {
+                console.log("Ingresando el registro de saldo: " + resultados.insertId)
+                insertarRegistro('idSaldo', fecha, descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
+                    if (errorRegistro) {
+                        console.error('Error al insertar en registro:', errorRegistro);
+                        res.json({ success: false });
+                    } else {
+                        console.log('Registro insertado correctamente', resultadosRegistro);
+                    }
+                });
+                console.log(resultados);
+            }
+        })
+    }
+}
 
 //Ruta para obtener facturas
 app.get('/obtener-facturas', (req, res) => {
@@ -860,13 +1037,29 @@ app.post('/anular-factura', (req, res) => {
     })
 });
 
+
 app.get('/obtener-anticipos-empleado', (req, res) => {
     const { idEmpleado, fecha } = req.query;
-    const consulta = `SELECT g.valor, r.fecha FROM gastos g, registro r WHERE g.idEmpleado = ? AND g.idGasto = r.idGasto AND r.fecha > ?; `;
+    const consulta = `SELECT g.valor, r.fecha FROM gastos g, registro r WHERE g.idEmpleado = ? AND g.idGasto = r.idGasto AND r.fecha >= ? AND r.fecha ; `;
 
     db.query(consulta, [idEmpleado, fecha], (error, resultados) => {
         if (error) {
             console.error('Error al obtener los gastos del empleado:', error);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        } else {
+            console.log(resultados);
+            res.json(resultados);
+        }
+    });
+});
+
+app.get('/obtener-anticipos-entre', (req, res) => {
+    const { idEmpleado, fechaInicio, fechaPago } = req.query;
+    const consulta = `SELECT g.valor from gasto g, registro r WHERE g.idGasto = r.idGasto AND g.idEmpleado = ? AND r.fecha >= ? AND rfecha <= ?`;
+
+    db.query(consulta, [idEmpleado, fechaInicio, fechaPago], (error, resultados) => {
+        if (error) {
+            console.error('Error al obtener los anticipos del empleado:', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
         } else {
             console.log(resultados);
@@ -893,7 +1086,7 @@ app.get('/obtener-roles-empleado/:idEmpleado', (req, res) => {
 
 // Otras rutas y lógica del servidor...
 //Funcion especial para ingreso general de registro en las tablas monetarias
-function insertarRegistro(tipo, fecha, descripcion, valor, id, callback) {
+function insertarRegistro(tipo, fecha, descripcion, valor, id, suma, callback) {
     // Consulta SQL para obtener el último registro
     const obtenerUltimoRegistroQuery = 'SELECT saldo FROM registro ORDER BY idRegistro DESC LIMIT 1';
 
@@ -914,7 +1107,7 @@ function insertarRegistro(tipo, fecha, descripcion, valor, id, callback) {
         // Calcular el nuevo saldo basado en el tipo de operación
         let nuevoSaldo;
 
-        if (tipo === 'idAnticipo' || tipo === 'idSaldo') {
+        if (tipo === 'idAnticipo' || tipo === 'idSaldo' || (tipo === 'idDeuda' && suma === true)) {
             // Sumar el valor al saldo anterior
             nuevoSaldo = saldoAnteriorNumero + valorNumero;
         } else {

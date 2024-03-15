@@ -1,0 +1,73 @@
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h4><i class="fa-solid fa-money-check-dollar"></i>Pagar Deuda</h4>
+    </div>
+    <div class="card-body">
+      <form *ngIf="deudaForm" [formGroup]="deudaForm" (ngSubmit)="onSubmit()">
+        <!--Fila para datos de deuda-->
+        <div class="row">
+          <!--id de deuda-->
+          <div class="col-md-2 mb-2">
+            <label for="idDeuda" class="form-label">Id de Deuda:</label>
+            <input type="text" id="idDeuda" class="form-control" formControlName="idDeuda" readonly>
+          </div>
+          <!--Descripcion de la deuda-->
+          <div class="col-md-2 mb-2">
+            <label for="descripcion" class="form-label">Cédula:</label>
+            <input type="text" id="descripcion" class="form-control" formControlName="descripcion" readonly>
+          </div>
+          <!--Nombre del Propietario de la deuda-->
+          <div class="col-md-4 mb-2">
+            <label for="propietario" class="form-label">Propietario:</label>
+            <input type="text" id="propietario" class="form-control" formControlName="propietario" readonly>
+          </div>
+        </div>
+        <!--Campos ingresados-->
+        <div class="row">
+          <!--Valor Total de la deuda-->
+          <div class="col-md-4 mb-2">
+            <label for="valorTotal" class="form-label">Valor Total:</label>
+            <input type="text" id="valorTotal" class="form-control" formControlName="valorTotal" readonly>
+          </div>
+          <!--Suma de los pagos actuales-->
+          <div class="col-md-4 mb-2">
+            <label for="sumaPagos" class="form-label">Suma Pagos:</label>
+            <input type="text" id="sumaPagos" class="form-control" formControlName="sumaPagos" readonly>
+          </div>
+          <!-- Fecha de Pago -->
+          <div class="col-md-5 mb-2">
+            <label for="fecha" class="form-label">Fecha de Pago:</label>
+            <div class="input-group">
+              <input class="form-control form-control-sm" formControlName="fecha" ngbDatepicker #dp="ngbDatepicker"
+                readonly id="fecha"/><!-- Agregado form-control-sm para hacerlo más pequeño -->
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button">
+                  <!-- Modificado el contenido del botón -->
+                  <i class="fa fa-calendar" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="deudaForm.get('fecha')?.hasError('required')" class="text-danger">
+              La fecha de pago es obligatoria.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!--Valor-->
+          <div class="col-md-3 mb-2">
+            <label for="valor" class="form-label">Valor:</label>
+            <input type="text" id="valor" class="form-control" formControlName="valor"
+              (keypress)="validarEntrada($event)" />
+          </div>
+        </div>
+        <!--Boton de enviar-->
+        <div class="row">
+          <div class="text-end mt-3">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

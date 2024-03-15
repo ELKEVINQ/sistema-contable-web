@@ -16,6 +16,8 @@ export class RegistroGeneralComponent {
   paginaActual = 1;
   itemsPorPagina = 10;
 
+  saldoActual = 0;
+
   constructor(private fb: FormBuilder, private registroService: RegistroService, private router: Router) {
     this.filtroForm = this.fb.group({
     tipoBusqueda: ['descripcion'],
@@ -31,6 +33,7 @@ export class RegistroGeneralComponent {
     this.registroService.obtenerRegistro().subscribe((data: any[]) => {
       this.registros = data;
       this.aplicarFiltros();
+      this.saldoActual = this.registros[this.registros.length-1].saldo
     });
   }
 

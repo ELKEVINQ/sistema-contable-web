@@ -106,7 +106,17 @@
             <a class="dropdown-item" [routerLink]="['/p/lista-productos']">Lista de Productos</a>
           </div>
         </li>
-
+        <!-- Deudas -->
+        <li *ngIf="sessionServicePublic.isAuthenticated()" class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownGastos" role="button" data-bs-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Deudas
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownGastos">
+            <a class="dropdown-item" [routerLink]="['/p/add-deuda']">Registar Deudas</a>
+            <a class="dropdown-item" [routerLink]="['/p/lista-deuda']">Lista de deudas</a>
+          </div>
+        </li>
         <!-- Registro general -->
         <li class="nav-item" *ngIf="sessionServicePublic.isAuthenticated()">
           <a class="nav-link" [routerLink]="['/p/registro-general']">Registro General</a>

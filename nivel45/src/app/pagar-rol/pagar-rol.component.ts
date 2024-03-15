@@ -106,9 +106,8 @@ export class PagarRolComponent {
   }
 
   solicitarValorAnticipo() {
-    const { idEmpleado, nombres, valor, fecha, descripcion, observaciones } = this.rolForm.value;
-    const fecha1 = this.rolForm.get('fecha')?.value;
-    const fechaFormateada = this.formatToMySQLDate(fecha1);
+    const fecha = this.rolForm.get('fecha')?.value;
+    const fechaFormateada = this.formatToMySQLDate(fecha);
     this.anticipos = [];
     this.empleadoService.obtenerAnticiposEmpleado( this.idEmpleado, fechaFormateada ).subscribe((data: any[]) => {
       this.anticipos = data;
@@ -116,26 +115,19 @@ export class PagarRolComponent {
 
     setTimeout(() => {
       const fechaActual = new Date();
-      console.log(this.anticipos);
 
       this.anticiposSumados = 0; // Reinicia el total antes de sumar
 
-      for (const anticipo of this.anticipos) {
-        const fechaGasto = new Date(anticipo.fecha);
-        // Verifica si la fecha del gasto está entre las fechas deseadas
-        if (fechaGasto >= fecha) {
-          this.anticiposSumados += anticipo.valor;
-        }
+      for (let i = 0; i < this.anticipos.length; i++){
+        this.anticiposSumados += this.anticipos[i].valor;
       }
+      const fecha1: Date = new Date(fecha.year, fecha.month - 1, fecha.day);
 
       this.rolForm.get('anticiposSumados')?.setValue(this.anticiposSumados);
-      const diffMilliseconds = fechaActual.getDate() - this.rolForm.get('fecha')?.value;
-      console.log(diffMilliseconds)
-      const dias = Math.floor(diffMilliseconds / (24 * 60 * 60 * 1000));
+      const dias = fechaActual.getDate() - fecha1.getDate()
 
       // Asigna el número de días a la variable 'dias'
       this.dias = dias;
-      console.log(dias)
     }, 200);
   }
 
@@ -152,7 +144,7 @@ export class PagarRolComponent {
       this.registroService.insertarRol({ idEmpleado, valor: (valor-anticipo) , anticipo, fechaFormateada, descripcion, observaciones, fechaPago }).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Rol de pago insertado correctamente');
-          this.empleadoService.imprimirRol(nombres, valor, fechaFormateada, fechaPago, observaciones, this.cedula, this.dias, this.anticiposSumados, false);
+          this.empleadoService.imprimirRol(nombres, valor, fechaFormateada, fechaPago, observaciones, this.cedula, this.dias, this.anticiposSumados, false, this.anticipos);
           // Puedes hacer más cosas aquí, como redirigir a otra página
         } else {
           alert('Error al insertar el rol de pago');
