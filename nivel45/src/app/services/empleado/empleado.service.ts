@@ -61,7 +61,7 @@ export class EmpleadoService {
   }
 
   obtenerAnticiposEmpleadoFechado(idEmpleado: any, fechaInicio: any, fechaPago: any): Observable<any[]> {
-    const url = `${this.apiUrl}/obtener-anticipos-empleado`;
+    const url = `${this.apiUrl}/obtener-anticipos-entre`;
 
     // Agrega los parámetros a la URL
     const params = new HttpParams()
@@ -119,8 +119,9 @@ export class EmpleadoService {
     observaciones: any,
     cedula: any, dias: any,
     anticiposSumados: any,
-    esSoloImpreso: boolean, anticipos: any[]
-    ) {
+    esSoloImpreso: boolean,
+    anticipos: any[]
+  ) {
     // Espera 1 segundo antes de continuar
     setTimeout(() => {
       const negocio = 'NIVEL 45';
@@ -133,26 +134,22 @@ export class EmpleadoService {
       let anticiposPagados = 0;
       let cantidadRecibida = 0;
 
-      if (esSoloImpreso){
-        necesitaPagar = valor + anticiposSumados;
-        anticiposPagados = anticiposSumados;
-        cantidadRecibida = valor;
-      }else{
-        necesitaPagar = valor;
-        anticiposPagados = anticiposSumados;
-        cantidadRecibida = valor - anticiposSumados;
-      }
+      necesitaPagar = valor;
+      anticiposPagados = anticiposSumados;
+      cantidadRecibida = valor-anticiposSumados;
 
       const body = [];
-      body.push(['N°', 'fecha', 'valor'])
+      body.push(['N°', 'fecha', 'descripcion', 'valor'])
 
-      for (let i = 0; i > anticipos.length; i++){
+      for (let i = 0; i < anticipos.length; i++) {
         body.push([
-          i,
+          i + 1,
           this.formatearFecha(anticipos[i].fecha),
+          anticipos[i].descripcion,
           anticipos[i].valor
         ]);
       }
+      console.log(body)
 
       const documentDefinition: any = {
         pageSize: 'A4',
@@ -221,7 +218,7 @@ export class EmpleadoService {
           {
             table: {
               headerRows: 1,
-              widths: ['10%', '*', '10%',],
+              widths: ['10%', '15%', '*', '10%',],
               body: body,
             }
           },
@@ -300,4 +297,6 @@ export class EmpleadoService {
       return str;
     }
   }
+
+
 }

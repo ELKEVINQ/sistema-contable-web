@@ -448,16 +448,17 @@ export class FacturarComponent {
   }
 
   calcularSaldo(idObra: string, valorFactura: number): number {
+    let saldo: number = 0
     this.registroService.obtenerAnticipos(idObra).subscribe((data: any[]) => {
       let anticipos: any[] = data
       for (let i = 0; i < anticipos.length; i++) {
         this.valorAnticipos += parseFloat(anticipos[i].valor)
       }
-      this.valorAnticipos -= valorFactura
-      return this.valorAnticipos
+      saldo = valorFactura - this.valorAnticipos
+      return saldo
     }, (error) => {
       console.error("Error al obtener anticipos:", error);
     });
-    return this.valorAnticipos
+    return saldo
   }
 }

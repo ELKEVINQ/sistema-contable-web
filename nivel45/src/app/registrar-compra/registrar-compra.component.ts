@@ -4,6 +4,7 @@ import { RegistroService } from '../services/registro/registro.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ObraService } from '../services/obras/obras.service';
 import { EmpleadoService } from '../services/empleado/empleado.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registrar-compra',
@@ -28,7 +29,13 @@ export class RegistrarCompraComponent {
   idEmpleado: string = '';
   empleados: any[] = [];
 
-  constructor(private fb: FormBuilder, private registroService: RegistroService, private obraService: ObraService, private empleadoService: EmpleadoService) {
+  constructor(
+    private fb: FormBuilder,
+    private registroService: RegistroService,
+    private obraService: ObraService,
+    private empleadoService: EmpleadoService,
+    private router: Router
+    ) {
     this.compraForm = this.fb.group({
       descripcion: [''],
       valor: ['', [Validators.pattern('[0-9]+(\.[0-9]+)?')]],
@@ -106,6 +113,13 @@ export class RegistrarCompraComponent {
     return '';
   }
 
+  reloadPage() {
+    // Realiza la recarga de la página sin cerrar la sesión
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([this.router.url]);
+  }
+
   onSubmit() {
     if (this.compraForm.valid) {
       const {descripcion, valor, fecha} = this.compraForm.value;
@@ -117,6 +131,7 @@ export class RegistrarCompraComponent {
       this.registroService.insertarGasto({descripcion, valor, fecha: fechaFormat, idObra: this.idObra, idEmpleado: this.idEmpleado}).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Compra insertada correctamente');
+          this.reloadPage()
           // Puedes hacer más cosas aquí, como redirigir a otra página
         } else {
           alert('Error al insertar la compra');

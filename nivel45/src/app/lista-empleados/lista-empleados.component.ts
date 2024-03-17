@@ -46,7 +46,8 @@ export class ListaEmpleadosComponent {
     this.router.navigate(['/p/lista-roles'], { queryParams: {
       idEmpleado: empleado.idEmpleado,
       cedula: empleado.cedula,
-      nombres: empleado.nombres
+      nombres: empleado.nombres,
+      sueldo: empleado.sueldo
      } });
   }
 

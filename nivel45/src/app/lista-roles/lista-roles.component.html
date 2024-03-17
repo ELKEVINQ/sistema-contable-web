@@ -26,7 +26,7 @@
       <td>{{ rol.anticipo }}</td>
       <td>{{ formatearFecha(rol.fechaInicio) }}</td>
       <td>{{ formatearFecha(rol.fechaPago) }}</td>
-      <td>{{ (rol.valor - rol.anticipo) }}</td>
+      <td>{{ regular(sueldo - (rol.valor + rol.anticipo)) }}</td>
       <td>
         <span class="actions1" (click)="imprimirRol(rol)">
           <i class="fa fa-plus"></i>Imprimir

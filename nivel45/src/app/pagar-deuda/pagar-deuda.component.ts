@@ -24,7 +24,9 @@ export class PagarDeudaComponent {
       descripcion: [''],
       propietario: [''],
       valor: ['', [Validators.pattern('[0-9]+(\.[0-9]+)?')]],
+      valorTotal: ['', [Validators.pattern('[0-9]+(\.[0-9]+)?')]],
       fecha: [''],
+      sumaPagos: [''],
     });
   }
 
@@ -119,6 +121,7 @@ export class PagarDeudaComponent {
       this.registroService.pagarDeuda({ fechaPago, valor, idDeuda, estado }).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Deuda pagada correctamente');
+          this.volver()
           // Puedes hacer más cosas aquí, como redirigir a otra página
         } else {
           alert('Error al insertar el pago');

@@ -19,7 +19,7 @@ export class ListaRolesComponent {
   idEmpleado: any;
   cedula: any;
   nombres: any;
-  anticipos: any[] = [];
+  sueldo: number = 0;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private empleadoService: EmpleadoService, private router: Router) {
     this.filtroForm = this.fb.group({
@@ -56,6 +56,7 @@ export class ListaRolesComponent {
       this.idEmpleado = params['idEmpleado'];
       this.cedula = params['cedula']
       this.nombres = params['nombres'];
+      this.sueldo = params['sueldo']
     });
   }
 
@@ -66,24 +67,24 @@ export class ListaRolesComponent {
   }
 
   imprimirRol(rol: any) {
+    let anticipos: any[] = [];
+    let anticiposSumados = 0;
     this.empleadoService.obtenerAnticiposEmpleadoFechado(this.idEmpleado, rol.fechaInicio, rol.fechaPago).subscribe((data: any[]) => {
-      this.anticipos = data;
-    });
-    let anticiposSumados = 0; // Reinicia el total antes de sumar
+      anticipos = data;
+      for (let i = 0; i < anticipos.length; i++) {
+        anticiposSumados += anticipos[i].valor;
+      }
+      console.log(anticiposSumados)
+      const fechaInicio = new Date(rol.fechaInicio);
+      const fechaPago = new Date(rol.fechaPago);
 
-    for (let i = 0; i < this.anticipos.length; i++) {
-      anticiposSumados += this.anticipos[i].valor;
-    }
-    const fechaInicio = new Date(rol.fechaInicio);
-    const fechaPago = new Date(rol.fechaPago);
+      // Calcula la diferencia en milisegundos entre las fechas
+      const diffMilliseconds = fechaPago.getTime() - fechaInicio.getTime();
 
-    // Calcula la diferencia en milisegundos entre las fechas
-    const diffMilliseconds = fechaPago.getTime() - fechaInicio.getTime();
-
-    // Convierte la diferencia en días
-    const dias = Math.floor(diffMilliseconds / (24 * 60 * 60 * 1000));
-    console.log("Diferencia en días:", dias);
-    this.empleadoService.imprimirRol(this.nombres, rol.valor, this.formatearFecha(rol.fechaInicio), this.formatearFecha(rol.fechaPago), rol.observaciones, this.cedula, dias, anticiposSumados, false, this.anticipos);
+      // Convierte la diferencia en días
+      const dias = Math.floor(diffMilliseconds / (24 * 60 * 60 * 1000));
+      this.empleadoService.imprimirRol(this.nombres, this.sueldo, this.formatearFecha(rol.fechaInicio), this.formatearFecha(rol.fechaPago), rol.observaciones, this.cedula, dias, anticiposSumados, false, anticipos);
+    }); // Reinicia el total antes de sumar
   }
 
   onPageChange(event: number) {
@@ -102,5 +103,16 @@ export class ListaRolesComponent {
     const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
     const fin = inicio + this.itemsPorPagina;
     return this.roles.slice(inicio, fin);
+  }
+
+  regular(valor: number): string {
+    if (valor === null || valor == 0) {
+      return "0.00"
+    } else {
+      if (valor % 2 !== 0) {
+        return valor.toFixed(2) + "";
+      }
+      return valor + ".00";
+    }
   }
 }

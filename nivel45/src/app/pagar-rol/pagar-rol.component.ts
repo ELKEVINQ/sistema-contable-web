@@ -144,8 +144,7 @@ export class PagarRolComponent {
       this.registroService.insertarRol({ idEmpleado, valor: (valor-anticipo) , anticipo, fechaFormateada, descripcion, observaciones, fechaPago }).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Rol de pago insertado correctamente');
-          this.empleadoService.imprimirRol(nombres, valor, fechaFormateada, fechaPago, observaciones, this.cedula, this.dias, this.anticiposSumados, false, this.anticipos);
-          // Puedes hacer más cosas aquí, como redirigir a otra página
+          this.volver()
         } else {
           alert('Error al insertar el rol de pago');
           // Manejo de errores

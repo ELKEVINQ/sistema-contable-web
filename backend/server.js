@@ -1040,7 +1040,7 @@ app.post('/anular-factura', (req, res) => {
 
 app.get('/obtener-anticipos-empleado', (req, res) => {
     const { idEmpleado, fecha } = req.query;
-    const consulta = `SELECT g.valor, r.fecha FROM gastos g, registro r WHERE g.idEmpleado = ? AND g.idGasto = r.idGasto AND r.fecha >= ? AND r.fecha ; `;
+    const consulta = `SELECT g.valor, r.fecha, r.descripcion FROM gastos g, registro r WHERE g.idEmpleado = ? AND g.idGasto = r.idGasto AND r.fecha >= ?; `;
 
     db.query(consulta, [idEmpleado, fecha], (error, resultados) => {
         if (error) {
@@ -1055,7 +1055,7 @@ app.get('/obtener-anticipos-empleado', (req, res) => {
 
 app.get('/obtener-anticipos-entre', (req, res) => {
     const { idEmpleado, fechaInicio, fechaPago } = req.query;
-    const consulta = `SELECT g.valor from gasto g, registro r WHERE g.idGasto = r.idGasto AND g.idEmpleado = ? AND r.fecha >= ? AND rfecha <= ?`;
+    const consulta = `SELECT g.valor, r.descripcion, r.fecha from gastos g, registro r WHERE g.idGasto = r.idGasto AND g.idEmpleado = ? AND r.fecha >= ? AND r.fecha <= ?`;
 
     db.query(consulta, [idEmpleado, fechaInicio, fechaPago], (error, resultados) => {
         if (error) {

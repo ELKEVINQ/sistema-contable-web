@@ -63,7 +63,7 @@ export class AddProductoComponent {
   }
 
   volver() {
-    this.router.navigate(['/p/lista-clientes'], {
+    this.router.navigate(['/p/lista-productos'], {
     });
   }
 

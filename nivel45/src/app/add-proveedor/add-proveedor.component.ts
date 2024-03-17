@@ -23,7 +23,7 @@ export class AddProveedorComponent {
   }
 
   volver() {
-    this.router.navigate(['/p/lista-clientes'], {
+    this.router.navigate(['/p/lista-proveedores'], {
     });
   }
 

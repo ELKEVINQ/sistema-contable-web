@@ -4,6 +4,7 @@ import { FacturaCompraService } from '../services/factura-compra/factura-compra.
 import { ProveedorService } from '../services/proveedor/proveedor.service';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ObraService } from '../services/obras/obras.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registrar-factura-compra',
@@ -26,7 +27,7 @@ export class RegistrarFacturaCompraComponent {
   idObra: string = '';
   obras: any[] = [];
 
-  constructor(private fb: FormBuilder, private facturaCompraService: FacturaCompraService, private proveedorService: ProveedorService, private obraService: ObraService) {
+  constructor(private fb: FormBuilder, private facturaCompraService: FacturaCompraService, private proveedorService: ProveedorService, private obraService: ObraService, private router: Router) {
     this.facturaCompraForm = this.fb.group({
       idFacturaCompra: [''],
       idProveedor: [''],
@@ -106,6 +107,13 @@ export class RegistrarFacturaCompraComponent {
     }
   }
 
+  reloadPage() {
+    // Realiza la recarga de la página sin cerrar la sesión
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([this.router.url]);
+  }
+
   onSubmit() {
     if (this.facturaCompraForm.valid) {
       const { idFacturaCompra, idProveedor, nombre, descripcion, valor, fecha } = this.facturaCompraForm.value;
@@ -118,6 +126,7 @@ export class RegistrarFacturaCompraComponent {
       this.facturaCompraService.insertarFacturaCompra({ idFacturaCompra, idProveedor, descripcion, fecha: fechaFormateada, valor, idObra }).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Factura de compra insertada correctamente');
+          this.reloadPage()
           // Puedes hacer más cosas aquí, como redirigir a otra página
         } else {
           alert('Error al insertar la factura de compra');
