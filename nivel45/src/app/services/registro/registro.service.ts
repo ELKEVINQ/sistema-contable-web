@@ -80,7 +80,18 @@ export class RegistroService {
   }
 
   pagarDeuda(deudaData: any) {
-    const url = `${this.apiUrl}/insertar-gasto`;
+    const url = `${this.apiUrl}/pagar-deuda`;
+    return this.http.post<any>(url, deudaData)
+      .pipe(
+        catchError((error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          throw error; // Propaga el error para que otros puedan manejarlo
+        })
+      );
+  }
+
+  aumentarDeuda(deudaData: any){
+    const url = `${this.apiUrl}/aumentar-deuda`;
     return this.http.post<any>(url, deudaData)
       .pipe(
         catchError((error) => {
@@ -110,7 +121,7 @@ export class RegistroService {
     return this.http.get<any[]>(url);
   }
 
-  obtenerMovimientos(idDeuda: any): Observable<any[]> {
+  obtenerMovimientos(idDeuda: string): Observable<any[]> {
     const url = `${this.apiUrl}/obtener-movimientos/${idDeuda}`;
     return this.http.get<any[]>(url);
   }

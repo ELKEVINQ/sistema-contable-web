@@ -142,7 +142,7 @@ app.post('/insertar-deuda', (req, res) => {
     const insertarAnticipoQuery = 'INSERT INTO deudas (descripcion, propietario, valor, fechaInicio, prestamo) VALUES (?, ?, ?, ?, ?)';
 
     // Ejecuta la consulta para insertar en anticipo
-    db.query(insertarAnticipoQuery, [descripcion, propietario, valor, fechaInicio, prestamo], (error, resultados) => {
+    db.query(insertarAnticipoQuery, [descripcion, propietario, valor, cortarFecha(fechaInicio), prestamo], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción de deuda:', error);
             res.json({ success: false });
@@ -154,7 +154,7 @@ app.post('/insertar-deuda', (req, res) => {
 
             if (prestamo === true) {
                 // Llamar a la función para insertar en registro
-                insertarRegistro('idDeuda', fechaInicio, descripcion, valor, idDeuda, true, (errorRegistro, resultadosRegistro) => {
+                insertarRegistro('idDeuda', cortarFecha(fechaInicio), descripcion, valor, idDeuda, true, (errorRegistro, resultadosRegistro) => {
                     if (errorRegistro) {
                         console.error('Error al insertar en registro:', errorRegistro);
                         res.json({ success: false });
@@ -190,15 +190,44 @@ app.get('/obtener-deudas', (req, res) => {
     });
 });
 
+// Ruta para la inserción de deudas
+app.post('/aumentar-deuda', (req, res) => {
+    const { idDeuda, valor, prestamo, fechaInicio } = req.body;
+
+    const valorAumentado = valor + prestamo
+
+    // Consulta SQL para la inserción en anticipo
+    const insertarAnticipoQuery = 'UPDATE deudas SET valor = ?, fechaInicio = ? WHERE idDeuda = ?';
+
+    // Ejecuta la consulta para insertar en anticipo
+    db.query(insertarAnticipoQuery, [valorAumentado, cortarFecha(fechaInicio), idDeuda], (error, resultados) => {
+        if (error) {
+            console.error('Error en el aumento de deuda:', error);
+            res.json({ success: false });
+        } else {
+            console.log('Deuda aumentada correctamente', resultados);
+            insertarRegistro('idDeuda', cortarFecha(fechaInicio), "Deuda Aumentada", prestamo, idDeuda, true, (errorRegistro, resultadosRegistro) => {
+                if (errorRegistro) {
+                    console.error('Error al insertar en registro:', errorRegistro);
+                    res.json({ success: false });
+                } else {
+                    console.log('Registro insertado correctamente', resultadosRegistro);
+                    res.json({ success: true });
+                } valor
+            });
+        }
+    });
+});
+
 // Ruta para la pago de deudas
 app.post('/pagar-deuda', (req, res) => {
     const { fechaPago, valor, idDeuda, estado } = req.body;
 
     // Consulta SQL para la inserción en anticipo
-    const insertarAnticipoQuery = 'INSERT INTO movimientosdeuda (fechaPago, valor, idDeuda) VALUES (?, ?, ?)';
+    const insertarDeudaQuery = 'INSERT INTO movimientosdeuda (fechaPago, valor, idDeuda) VALUES (?, ?, ?)';
 
     // Ejecuta la consulta para insertar en anticipo
-    db.query(insertarAnticipoQuery, [fechaPago, valor, idDeuda], (error, resultados) => {
+    db.query(insertarDeudaQuery, [cortarFecha(fechaPago), valor, idDeuda], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción del pago:', error);
             res.json({ success: false });
@@ -212,31 +241,31 @@ app.post('/pagar-deuda', (req, res) => {
                     if (error) {
                         console.error('Error en la modificacion del estado:', error);
                         res.json({ success: false })
-                    }else {
+                    } else {
                         console.log('Deuda pagada correctamente', resultados);
                     }
                 })
             }
 
             // Llamar a la función para insertar en registro
-            insertarRegistro('idDeuda', fechaInicio, descripcion, valor, idDeuda, false, (errorRegistro, resultadosRegistro) => {
+            insertarRegistro('idDeuda', cortarFecha(fechaPago), "Abono de Deuda", valor, idDeuda, false, (errorRegistro, resultadosRegistro) => {
                 if (errorRegistro) {
                     console.error('Error al insertar en registro:', errorRegistro);
                     res.json({ success: false });
                 } else {
                     console.log('Registro insertado correctamente', resultadosRegistro);
                     res.json({ success: true });
-                } valor
+                }
             });
         }
     });
 });
 
 // Ruta para la busqueda de movimientos de deudas
-app.get('/obtener-movimientos/idDeuda', (req, res) => {
-    const idDeuda = req.params.cedula;
+app.get('/obtener-movimientos/:idDeuda', (req, res) => {
+    const idDeuda = req.params.idDeuda;
     const consulta = `
-        SELECT * FROM movimientos WHERE idDeuda = ?
+        SELECT * FROM movimientosdeuda WHERE idDeuda = ?
         `;
 
     db.query(consulta, [idDeuda], (error, resultados) => {
@@ -245,9 +274,9 @@ app.get('/obtener-movimientos/idDeuda', (req, res) => {
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
         } else {
             // Formatear la fecha antes de enviarla como respuesta
-            const data = resultados.map(movimientos => ({
-                ...movimientos,
-                fechaPago: formatarFecha(deudas.fechaPago),
+            const data = resultados.map(movimientosdeuda => ({
+                ...movimientosdeuda,
+                fechaPago: formatarFecha(movimientosdeuda.fechaPago),
             }));
 
             console.log(data);
@@ -275,7 +304,7 @@ app.post('/insertar-anticipo', (req, res) => {
             const idAnticipo = resultados.insertId;
 
             // Llamar a la función para insertar en registro
-            insertarRegistro('idAnticipo', fecha, descripcion, valor, idAnticipo, null, (errorRegistro, resultadosRegistro) => {
+            insertarRegistro('idAnticipo', cortarFecha(fecha), descripcion, valor, idAnticipo, null, (errorRegistro, resultadosRegistro) => {
                 if (errorRegistro) {
                     console.error('Error al insertar en registro:', errorRegistro);
                     res.json({ success: false });
@@ -331,7 +360,7 @@ app.post('/insertar-rol', (req, res) => {
     const insertarRolQuery = 'INSERT INTO `roldepago` (`idEmpleado`, `valor`, `anticipo`, `observaciones`, `fechaInicio` ) VALUES (?, ?, ?, ?, ?)';
 
     // Ejecuta la consulta para insertar en anticipo
-    db.query(insertarRolQuery, [idEmpleado, valor, anticipo, observaciones, fechaFormateada], (error, resultados) => {
+    db.query(insertarRolQuery, [idEmpleado, valor, anticipo, observaciones, cortarFecha(fechaFormateada)], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción de roles:', error);
             res.json({ success: false });
@@ -342,7 +371,7 @@ app.post('/insertar-rol', (req, res) => {
             const idRol = resultados.insertId;
 
             // Llamar a la función para insertar en registro
-            insertarRegistro('idRol', fechaPago, descripcion, valor, idRol, null, (errorRegistro, resultadosRegistro) => {
+            insertarRegistro('idRol', cortarFecha(fechaPago), descripcion, valor, idRol, null, (errorRegistro, resultadosRegistro) => {
                 if (errorRegistro) {
                     console.error('Error al insertar en registro:', errorRegistro);
                     res.json({ success: false });
@@ -363,7 +392,7 @@ app.post('/insertar-obra', (req, res) => {
     const consulta = 'INSERT INTO `obras` (`cedula`, `numero`, `descripcion`, `total`, `fechaInicio`, `estado`)VALUES (?, ?, ?, ?, ?, ?)';
 
     // Ejecuta la consulta con los datos proporcionados
-    db.query(consulta, [cedula, numero, descripcion, total, fechaInicio, estado], (error, resultados) => {
+    db.query(consulta, [cedula, numero, descripcion, total, cortarFecha(fechaInicio), estado], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción de obra:', error);
             res.json({ success: false });
@@ -622,7 +651,7 @@ app.post('/insertar-factura-compra', (req, res) => {
     const consultaFacturaCompra = 'INSERT INTO `facturacompra` (`idFacturaCompra`, `idProveedor`, `fecha`, `valor`) VALUES (?, ?, ?, ?)';
 
     // Ejecutar la consulta de la factura de compra
-    db.query(consultaFacturaCompra, [idFacturaCompra, idProveedor, fecha, valor], (errorFacturaCompra, resultadosFacturaCompra) => {
+    db.query(consultaFacturaCompra, [idFacturaCompra, idProveedor, cortarFecha(fecha), valor], (errorFacturaCompra, resultadosFacturaCompra) => {
         if (errorFacturaCompra) {
             console.error('Error en la inserción de la factura de compra:', errorFacturaCompra);
             res.json({ success: false });
@@ -638,7 +667,7 @@ app.post('/insertar-factura-compra', (req, res) => {
                 } else {
                     const idGasto = resultadosGasto.insertId;
                     // Llamar a la función para insertar en registro
-                    insertarRegistro('idGasto', fecha, descripcion, valor, idGasto, null, (errorRegistro, resultadosRegistro) => {
+                    insertarRegistro('idGasto', cortarFecha(fecha), descripcion, valor, idGasto, null, (errorRegistro, resultadosRegistro) => {
                         if (errorRegistro) {
                             console.error('Error al insertar en registro:', errorRegistro);
                             res.json({ success: false });
@@ -670,7 +699,7 @@ app.post('/insertar-gasto', (req, res) => {
             res.json({ success: false });
         } else {
             // Llamar a la función para insertar en registro
-            insertarRegistro('idGasto', fecha, descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
+            insertarRegistro('idGasto', cortarFecha(fecha), descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
                 if (errorRegistro) {
                     console.error('Error al insertar en registro:', errorRegistro);
                     res.json({ success: false });
@@ -776,7 +805,7 @@ app.post('/insertar-empleado', (req, res) => {
     console.log('Consulta SQL:', consulta);
 
     // Ejecuta la consulta con los datos proporcionados
-    db.query(consulta, [cedula, fecha_entrada, sueldo, estado], (error, resultados) => {
+    db.query(consulta, [cedula, cortarFecha(fecha_entrada), sueldo, estado], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción del empleado:', error);
             res.json({ success: false });
@@ -839,7 +868,7 @@ app.post('/modificar-estado-empleado', (req, res) => {
 
     const consulta = 'UPDATE `empleado` SET `estado` = ?, `fecha_salida` = ? WHERE `cedula` = ?';
 
-    db.query(consulta, [estado, fecha_salida, cedula], (error, resultados) => {
+    db.query(consulta, [estado, cortarFecha(fecha_salida), cedula], (error, resultados) => {
         if (error) {
             console.error('Error al modificar el empleado: ', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor al modificar' });
@@ -854,7 +883,7 @@ app.post('/reincorporar-empleado', (req, res) => {
     const { cedula, estado, fecha_salida, fecha_entrada } = req.body;
     const consulta = 'UPDATE `empleado` SET `estado` = ?, `fecha_salida` = ?, `fecha_entrada` = ? WHERE `cedula` = ?';
 
-    db.query(consulta, [estado, fecha_salida, fecha_entrada, cedula], (error, resultados) => {
+    db.query(consulta, [estado, cortarFecha(fecha_salida), cortarFecha(fecha_entrada), cedula], (error, resultados) => {
         if (error) {
             console.error('Error al modificar el empleado: ', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor al modificar' });
@@ -886,7 +915,7 @@ app.post('/insertar-factura', (req, res) => {
 
     const facturaConsulta = 'INSERT INTO `factura`(`idFactura`, `cedula`, `fecha`, `subtotal`, `iva`, `descuento`, `total`, `estado`, `idObra`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-    db.query(facturaConsulta, [factura.idFactura, factura.cedula, factura.fecha, factura.subtotal, factura.iva, 0, factura.total, factura.estado, factura.idObra], (error, resultados) => {
+    db.query(facturaConsulta, [factura.idFactura, factura.cedula, cortarFecha(factura.fecha), factura.subtotal, factura.iva, 0, factura.total, factura.estado, factura.idObra], (error, resultados) => {
         if (error) {
             console.error('Error en la inserción de la factura:', error);
             res.json({ success: false });
@@ -905,7 +934,7 @@ app.post('/insertar-factura', (req, res) => {
                 });
             }
 
-            ingresarSaldo(factura.idObra, factura.idFactura, factura.valor, factura.fecha, "Factura de venta", (errorRegistro, resultadosRegistro) => {
+            ingresarSaldo(factura.idObra, factura.idFactura, factura.valor, cortarFecha(factura.fecha), "Factura de venta", (errorRegistro, resultadosRegistro) => {
                 if (errorRegistro) {
                     console.error('Error al insertar en registro:', errorRegistro);
                     res.json({ success: false });
@@ -943,7 +972,7 @@ function ingresarSaldo(idObra, idFactura, valor, fecha, descripcion, callback) {
                 res.status(500).json({ success: false, error: 'Error interno del servidor' });
             } else {
                 console.log("Ingresando el registro de saldo: " + resultados.insertId)
-                insertarRegistro('idSaldo', fecha, descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
+                insertarRegistro('idSaldo', cortarFecha(fecha), descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
                     if (errorRegistro) {
                         console.error('Error al insertar en registro:', errorRegistro);
                         res.json({ success: false });
@@ -962,7 +991,7 @@ function ingresarSaldo(idObra, idFactura, valor, fecha, descripcion, callback) {
                 res.status(500).json({ success: false, error: 'Error interno del servidor' });
             } else {
                 console.log("Ingresando el registro de saldo: " + resultados.insertId)
-                insertarRegistro('idSaldo', fecha, descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
+                insertarRegistro('idSaldo', cortarFecha(fecha), descripcion, valor, resultados.insertId, null, (errorRegistro, resultadosRegistro) => {
                     if (errorRegistro) {
                         console.error('Error al insertar en registro:', errorRegistro);
                         res.json({ success: false });
@@ -1042,7 +1071,7 @@ app.get('/obtener-anticipos-empleado', (req, res) => {
     const { idEmpleado, fecha } = req.query;
     const consulta = `SELECT g.valor, r.fecha, r.descripcion FROM gastos g, registro r WHERE g.idEmpleado = ? AND g.idGasto = r.idGasto AND r.fecha >= ?; `;
 
-    db.query(consulta, [idEmpleado, fecha], (error, resultados) => {
+    db.query(consulta, [idEmpleado, cortarFecha(fecha)], (error, resultados) => {
         if (error) {
             console.error('Error al obtener los gastos del empleado:', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
@@ -1055,15 +1084,17 @@ app.get('/obtener-anticipos-empleado', (req, res) => {
 
 app.get('/obtener-anticipos-entre', (req, res) => {
     const { idEmpleado, fechaInicio, fechaPago } = req.query;
-    const consulta = `SELECT g.valor, r.descripcion, r.fecha from gastos g, registro r WHERE g.idGasto = r.idGasto AND g.idEmpleado = ? AND r.fecha >= ? AND r.fecha <= ?`;
+    const consulta = `SELECT g.valor, r.descripcion, r.fecha from gastos g, registro r WHERE g.idGasto = r.idGasto AND g.idEmpleado = ? AND r.fecha BETWEEN ? AND ?`;
 
-    db.query(consulta, [idEmpleado, fechaInicio, fechaPago], (error, resultados) => {
+    db.query(consulta, [idEmpleado, cortarFecha(fechaInicio), cortarFecha(fechaPago)], (error, resultados) => {
         if (error) {
             console.error('Error al obtener los anticipos del empleado:', error);
             res.status(500).json({ success: false, error: 'Error interno del servidor' });
         } else {
             console.log(resultados);
             res.json(resultados);
+
+            console.log(consulta);
         }
     });
 });
@@ -1143,6 +1174,14 @@ function formatarFecha(fecha) {
     const dia = String(date.getDate()).padStart(2, '0');
 
     return `${año}/${mes}/${dia}`;
+}
+
+function cortarFecha(str) {
+    if (str.length > 10) {
+        return str.substring(0, 10);
+    } else {
+        return str;
+    }
 }
 
 /*

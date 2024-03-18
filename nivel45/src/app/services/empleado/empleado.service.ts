@@ -69,6 +69,7 @@ export class EmpleadoService {
       .set('fechaInicio', fechaInicio)
       .set('fechaPago', fechaPago);
 
+      console.log(params)
     return this.http.get<any[]>(url, { params })
       .pipe(
         catchError((error) => {
@@ -136,7 +137,7 @@ export class EmpleadoService {
 
       necesitaPagar = valor;
       anticiposPagados = anticiposSumados;
-      cantidadRecibida = valor-anticiposSumados;
+      cantidadRecibida = (valor-anticiposSumados);
 
       const body = [];
       body.push(['N°', 'fecha', 'descripcion', 'valor'])
@@ -149,7 +150,6 @@ export class EmpleadoService {
           anticipos[i].valor
         ]);
       }
-      console.log(body)
 
       const documentDefinition: any = {
         pageSize: 'A4',
@@ -273,7 +273,7 @@ export class EmpleadoService {
                   body: [
                     ['Sueldo: ', { text: necesitaPagar, alignment: 'right' }],
                     ['Anticipos: ', { text: anticiposPagados, alignment: 'right' }],
-                    ['Recibe: ', { text: cantidadRecibida, alignment: 'right' }],
+                    ['Recibe: ', { text: this.regular(parseFloat(cantidadRecibida+"")), alignment: 'right' }],
                   ],
                 },
               },
@@ -288,6 +288,17 @@ export class EmpleadoService {
       }
 
     }, 500);
+  }
+
+  regular(valor: number): string {
+    if (valor === null || valor == 0) {
+      return "0.00"
+    } else {
+      if (valor % 2 !== 0) {
+        return valor.toFixed(2) + "";
+      }
+      return valor + ".00";
+    }
   }
 
   formatearFecha(str: string) {

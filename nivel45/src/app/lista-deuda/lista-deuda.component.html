@@ -22,13 +22,16 @@
       <td>{{ deuda.propietario }}</td>
       <td>{{ regular(deuda.valor) }}</td>
       <td>{{ deuda.fechaInicio }}</td>
-      <td>{{ regular(saldo[i]) }}</td>
+      <td>{{ regular(deuda.valor - saldo[i])}}</td>
       <td>
         <span class="actions1" (click)="pagarDeuda(deuda)">
           <i class="fa fa-plus"></i>Abonar
         </span>
         <span class="actions2" (click)="listaMovimientos(deuda)">
-          <i class="fa fa-plus"></i>Abonos
+          <i class="fa fa-plus"></i>Lista Abonos
+        </span>
+        <span class="actions2" (click)="aumentarDeuda(deuda)">
+          <i class="fa fa-plus"></i>Aumentar Deuda
         </span>
       </td>
     </tr>

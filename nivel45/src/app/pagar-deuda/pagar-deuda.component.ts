@@ -17,6 +17,7 @@ export class PagarDeudaComponent {
   valor: number = 0;
   valorAPagar: number = 0;
   sumaPagos: number = 0
+  fecha: any | null = null
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private registroService: RegistroService, private router: Router) {
     this.deudaForm = this.fb.group({
@@ -107,9 +108,8 @@ export class PagarDeudaComponent {
 
   onSubmit() {
     if (this.deudaForm.valid) {
-      const { fecha, valor, idDeuda } = this.deudaForm.value;
-      const fechaPago = this.formatToMySQLDate(fecha)
-
+      const fechaPago = this.formatToMySQLDate(this.deudaForm.get('fecha')?.value)
+      const valor = this.deudaForm.get('valor')?.value
       let estado = "Deuda"
       if (valor < this.valorAPagar){
         estado = "Deuda"
@@ -117,8 +117,15 @@ export class PagarDeudaComponent {
         estado = "Pagado"
       }
 
+      const deudaData = {
+        fechaPago: fechaPago,
+        valor: valor,
+        idDeuda: this.idDeuda,
+        estado: estado
+      }
+      console.log(deudaData)
       // Llama al servicio para insertar el anticipo
-      this.registroService.pagarDeuda({ fechaPago, valor, idDeuda, estado }).subscribe((response: { success: any; }) => {
+      this.registroService.pagarDeuda(deudaData).subscribe((response: { success: any; }) => {
         if (response.success) {
           alert('Deuda pagada correctamente');
           this.volver()

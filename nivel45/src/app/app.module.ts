@@ -39,6 +39,7 @@ import { AddDeudaComponent } from './add-deuda/add-deuda.component';
 import { PagarDeudaComponent } from './pagar-deuda/pagar-deuda.component';
 import { ListaDeudaComponent } from './lista-deuda/lista-deuda.component';
 import { ListaMovimientosComponent } from './lista-movimientos/lista-movimientos.component';
+import { AumentarDeudaComponent } from './aumentar-deuda/aumentar-deuda.component';
 
 
 @NgModule({
@@ -76,6 +77,7 @@ import { ListaMovimientosComponent } from './lista-movimientos/lista-movimientos
     PagarDeudaComponent,
     ListaDeudaComponent,
     ListaMovimientosComponent,
+    AumentarDeudaComponent,
   ],
   imports: [
     BrowserModule,

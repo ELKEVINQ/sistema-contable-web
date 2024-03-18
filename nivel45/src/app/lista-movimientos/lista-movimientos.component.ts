@@ -8,12 +8,11 @@ import { RegistroService } from '../services/registro/registro.service';
   styleUrl: './lista-movimientos.component.css'
 })
 export class ListaMovimientosComponent {
-  registros: any[] = [];
+  abonos: any[] = [];
   propietario: string = '';
   totalDeudaOriginal: number = 0;  // Nueva variable para almacenar el total original
   abonoActual: number = 0;
-  saldo: number[] = [];
-  abono: number[] = [];
+  abonosSumados: number[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -28,28 +27,24 @@ export class ListaMovimientosComponent {
 
   obtenerMovimientos(idDeuda: any) {
     this.registroService.obtenerMovimientos(idDeuda).subscribe((data: any[]) => {
-      this.registros = data;
+      this.abonos = data;
       this.calcular()
     });
   }
 
 
   calcular() {
-    let saldoSumado = 0
-    let gastoSumado = 0
-    for (let i = 0; i < this.registros.length; i++) {
-      let saldo = 0
-      let gasto = 0
-      if (this.registros[i].valor != null) {
-        saldo = this.registros[i].valor
+    let abonosSumados = 0
+    for (let i = 0; i < this.abonos.length; i++) {
+      let abono = 0
+      if (this.abonos[i].valor != null) {
+        abono = this.abonos[i].valor
       }
-      if (this.registros[i].gasto != null) {
-        gasto = this.registros[i].gasto;
+      if (this.abonos[i].gasto != null) {
+        abono = this.abonos[i].gasto;
       }
-      saldoSumado = saldo + saldoSumado - gasto
-      this.saldo.push(saldoSumado)
-      gastoSumado += gasto
-      this.abono.push(gastoSumado)
+      abonosSumados += abono
+      this.abonosSumados.push(abonosSumados)
     }
   }
 

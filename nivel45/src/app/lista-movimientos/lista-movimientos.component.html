@@ -10,22 +10,20 @@
   <thead>
     <tr>
       <th scope="col">Número</th>
-      <th scope="col">Nombre y Apellido</th>
-      <th scope="col">Valor del Anticipo</th>
-      <th scope="col">Valor del Gasto</th>
-      <th scope="col">Gasto Actual</th>
-      <th scope="col">Saldo</th>
+      <th scope="col">Propietario</th>
+      <th scope="col">Valor total Deuda</th>
+      <th scope="col">Valor abonos</th>
+      <th scope="col">Saldo Actual</th>
       <!-- Agrega aquí más columnas según tus necesidades -->
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let registro of registros; let i = index">
+    <tr *ngFor="let abono of abonos; let i = index">
       <td>{{ i + 1 }}</td>
-      <td></td>
-      <td>{{ regular(registro.valor) }}</td>
-      <td>{{ regular(registro.gasto) }}</td>
-      <td></td>
-      <td>{{ regular(saldo[i]) }}</td>
+      <td>{{ propietario }}</td>
+      <td>{{ totalDeudaOriginal }}</td>
+      <td>{{ regular(abono.valor) }}</td>
+      <td>{{ regular(totalDeudaOriginal - abonosSumados[i]) }}</td>
     </tr>
   </tbody>
 </table>

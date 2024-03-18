@@ -30,6 +30,8 @@ import { ListaRolesComponent } from './lista-roles/lista-roles.component';
 import { AddDeudaComponent } from './add-deuda/add-deuda.component';
 import { ListaDeudaComponent } from './lista-deuda/lista-deuda.component';
 import { PagarDeudaComponent } from './pagar-deuda/pagar-deuda.component';
+import { ListaMovimientosComponent } from './lista-movimientos/lista-movimientos.component';
+import { AumentarDeudaComponent } from './aumentar-deuda/aumentar-deuda.component';
 
 const routes: Routes = [
   { path: 'inicio', component: InicioComponent },
@@ -48,11 +50,13 @@ const routes: Routes = [
       { path: 'add-producto', component: AddProductoComponent },
       { path: 'add-proveedor', component: AddProveedorComponent },
       { path: 'add-empleado', component: AddEmpleadoComponent },
+      { path: 'aumentar-deuda', component: AumentarDeudaComponent },
       { path: 'editar-cliente', component: EditarClienteComponent },
       { path: 'editar-proveedor', component: EditarProveedorComponent },
       { path: 'facturar', component: FacturarComponent },
       { path: 'lista-anticipos', component: ListaAnticiposComponent },
       { path: 'lista-deuda', component: ListaDeudaComponent },
+      { path: 'lista-movimientos', component: ListaMovimientosComponent },
       { path: 'lista-empleados', component: ListaEmpleadosComponent },
       { path: 'lista-clientes', component: ListaClientesComponent },
       { path: 'lista-facturas', component: ListaFacturasComponent },

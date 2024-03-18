@@ -33,7 +33,7 @@ export class ListaDeudaComponent {
       this.deudas = data;
       for (let i = 0; i < this.deudas.length; i++) {
         this.saldo.push(0)
-        this.registroService.obtenerMovimientos(this.deudas[i]).subscribe((data: any[]) => {
+        this.registroService.obtenerMovimientos(this.deudas[i].idDeuda).subscribe((data: any[]) => {
           if (data != null) {
             let saldo = 0
             for (let j = 0; j < data.length; j++) {
@@ -63,6 +63,17 @@ export class ListaDeudaComponent {
         idDeuda: deuda.idDeuda,
         propietario: deuda.propietario,
         valor: deuda.valor
+      }
+    });
+  }
+
+  aumentarDeuda (deuda: any){
+    this.router.navigate(['/p/aumentar-deuda'], {
+      queryParams: {
+        idDeuda: deuda.idDeuda,
+        propietario: deuda.propietario,
+        valor: deuda.valor,
+        saldo: this.saldo[this.saldo.length]
       }
     });
   }

@@ -74,7 +74,6 @@ export class ListaRolesComponent {
       for (let i = 0; i < anticipos.length; i++) {
         anticiposSumados += anticipos[i].valor;
       }
-      console.log(anticiposSumados)
       const fechaInicio = new Date(rol.fechaInicio);
       const fechaPago = new Date(rol.fechaPago);
 
