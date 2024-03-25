@@ -144,10 +144,7 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`cedula`, `nombres`, `apellidos`, `telefono`, `correo`, `direccion`) VALUES
-('0102219789', 'Patricio', 'Moscoso', '0988110993', '', 'San José'),
-('0105108922', 'Karen Viviana', 'Zambrano Valverde', '0985116173', 'kaviana72@hotmail.com', 'Mariscal lamar 21-80'),
-('0105108930', 'Kevin Javier', 'Zambrano Valverde', '0963394920', 'kevinvz110@gmail.com', 'Mariscal Lamar 21-80'),
-('0190490866001', 'Import Novum ', '', '', '', 'Cristobal colon y 9 de octubre');
+('9999999999', 'admin', 'admin', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -240,7 +237,7 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idUsuario`, `usuario`, `password`, `cedula`) VALUES
-(1, 'ELKEVINQ', 'Capernuli12@', '0105108930');
+(1, 'admin', 'admin', '9999999999');
 
 --
 -- Índices para tablas volcadas
