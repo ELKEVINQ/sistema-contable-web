@@ -74,7 +74,7 @@ export class AumentarDeudaComponent {
     if (this.deudaForm.valid) {
       const deudaData = {
         idDeuda: this.idDeuda,
-        valor: this.deudaForm.get('valorDeuda')?.value,
+        valor: this.deudaForm.get('valorDeuda')?.value + this.deudaForm.get('valorAumento')?.value,
         prestamo: this.deudaForm.get('valorAumento')?.value,
         fechaInicio: this.deudaForm.get('fechaInicio')?.value,
       };
@@ -83,13 +83,13 @@ export class AumentarDeudaComponent {
       deudaData.fechaInicio = this.formatToMySQLDate(deudaData.fechaInicio);
 
       // Llama al servicio para insertar el anticipo
-      this.registroService.insertarDeuda(deudaData).subscribe((response: { success: any; }) => {
+      this.registroService.aumentarDeuda(deudaData).subscribe((response: { success: any; }) => {
         if (response.success) {
-          alert('deuda insertada correctamente');
+          alert('deuda aumentada correctamente');
           this.volver()
           // Puedes hacer más cosas aquí, como redirigir a otra página
         } else {
-          alert('Error al insertar la deuda');
+          alert('Error al aumentar la deuda');
           // Manejo de errores
         }
       });

@@ -194,13 +194,11 @@ app.get('/obtener-deudas', (req, res) => {
 app.post('/aumentar-deuda', (req, res) => {
     const { idDeuda, valor, prestamo, fechaInicio } = req.body;
 
-    const valorAumentado = valor + prestamo
-
     // Consulta SQL para la inserción en anticipo
     const insertarAnticipoQuery = 'UPDATE deudas SET valor = ?, fechaInicio = ? WHERE idDeuda = ?';
 
     // Ejecuta la consulta para insertar en anticipo
-    db.query(insertarAnticipoQuery, [valorAumentado, cortarFecha(fechaInicio), idDeuda], (error, resultados) => {
+    db.query(insertarAnticipoQuery, [valor, cortarFecha(fechaInicio), idDeuda], (error, resultados) => {
         if (error) {
             console.error('Error en el aumento de deuda:', error);
             res.json({ success: false });
@@ -498,7 +496,6 @@ app.get('/obtener-registros', (req, res) => {
         LEFT JOIN gastos ON registro.idGasto = gastos.idGasto
         LEFT JOIN roldepago ON registro.idRol = roldepago.idRol
         LEFT JOIN deudas ON registro.idDeuda = deudas.idDeuda
-        ORDER BY fecha
     `;
 
     db.query(consulta, (error, resultados) => {

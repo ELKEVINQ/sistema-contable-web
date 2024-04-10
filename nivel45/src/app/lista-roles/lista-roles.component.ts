@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { EmpleadoService } from '../services/empleado/empleado.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-lista-roles',
@@ -36,11 +37,11 @@ export class ListaRolesComponent {
     }
   }
 
-  formatToMySQLDate(date: Date) {
-    if (date instanceof Date) {
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
+  formatToMySQLDate(date: NgbDateStruct): string {
+    if (date) {
+      const year = date.year;
+      const month = date.month.toString().padStart(2, '0');
+      const day = date.day.toString().padStart(2, '0');
       return `${year}-${month}-${day}`;
     }
     return '';

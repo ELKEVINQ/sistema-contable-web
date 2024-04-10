@@ -25,6 +25,7 @@ export class AddDeudaComponent {
 
   ngOnInit(): void {
   }
+
   validarEntrada(event: KeyboardEvent): void {
     const inputChar = String.fromCharCode(event.charCode);
 
@@ -44,6 +45,14 @@ export class AddDeudaComponent {
       return `${year}-${month}-${day}`;
     }
     return '';
+  }
+
+  formatearFecha(str: string) {
+    if (str.length > 10) {
+      return str.substring(0, 10);
+    } else {
+      return str;
+    }
   }
 
   volver() {

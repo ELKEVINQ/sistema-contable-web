@@ -123,7 +123,6 @@ export class PagarDeudaComponent {
         idDeuda: this.idDeuda,
         estado: estado
       }
-      console.log(deudaData)
       // Llama al servicio para insertar el anticipo
       this.registroService.pagarDeuda(deudaData).subscribe((response: { success: any; }) => {
         if (response.success) {
